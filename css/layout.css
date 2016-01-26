@@ -1,0 +1,135 @@
+:root {
+  --header-block-top-offset: 15px;
+  --header-block-left-offset : 20px;
+}
+
+.chart-container {
+  width: 595px;
+  position: relative;
+
+  .interactive-header {
+    border-top: 2px solid var(--red-1);
+    padding-left: var(--header-block-left-offset);
+    padding-top: var(--header-block-top-offset);
+    margin-bottom: 10px;
+  }
+  .interactive-header:before {
+    content: ' ';
+    width: 10px;
+    height: 30px;
+    display: block;
+    position: absolute;
+    margin-top: -var(--header-block-top-offset);
+    margin-left: -var(--header-block-left-offset);
+    background-color: var(--red-1);
+  }
+
+  .axis .tick > line {
+    stroke: black;
+    stroke-weight: 1;
+  }
+
+
+  .tab-bar {
+    display : flex;
+
+    .tab {
+      text-align: center;
+      border: 1px solid var(--grey-4);
+      padding: 5px 0;
+
+      /*border-bottom: none;*/
+      border-left-width: 0;
+
+      cursor: pointer;
+
+      flex: 1;
+
+      &:first-child {
+        border-left-width: 1px;
+      }
+
+      &.active-tab {
+        background-color: var(--red-1);
+        color: white;
+        border-color: var(--red-1);
+      }
+
+      &.disabled {
+        border-color: var(--grey-6);
+        color: var(--grey-4);
+        cursor: default;
+      }
+    }
+  }
+
+  .colour-legend {
+    margin: 10px;
+
+    .colour-group {
+      margin-right: 1em;
+      display: inline-block;
+    }
+    .colour-group-label {
+      margin-right: 5px;
+      vertical-align: top;
+    }
+    .colour-block {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+    }
+    .colour-block-label {
+      margin: 0 10px 0 5px;
+      vertical-align: top;
+    }
+  }
+
+  .source, .note {
+    font-size: 14px;
+    padding: 5px 10px;
+  }
+
+  .tooltip-outer {
+    position: absolute;
+    max-width: 50%;
+    border: 1px solid var(--grey-3);
+    background-color: white;
+
+    z-index: 1000;
+
+    &.tooltip-hidden {
+      display: none;
+    }
+
+    .tooltip {
+      position: absolute;
+      border: 1px solid var(--grey-3);
+      background-color: white;
+    }
+  }
+
+  .stepper {
+    margin: 10px;
+    padding: 10px;
+    background-color: var(--grey-10);
+
+    display: flex;
+  }
+  .stepper-text {
+  }
+  .stepper-tabs {
+    height: 30px;
+    line-height: 20px;
+    margin-right: 5px;
+
+    .tab {
+      min-width: 25px;
+
+      &.advancer {
+        flex: 0;
+        padding: 5px 10px;
+      }
+    }
+  }
+}
