@@ -10,7 +10,7 @@ import colours from './econ_colours.js';
 import Header from './header.js';
 import ToggleBarRaw from './toggle-bar.js';
 import ChartContainer from './chart-container.js';
-import USPrimariesRaw from './us-primary.js';
+import USPrimariesRaw, { DEMOCRAT, REPUBLICAN } from './us-primary.js';
 
 import chroma from 'chroma-js';
 
@@ -47,8 +47,8 @@ var props = {
   height : 320
 };
 
-const DEMOCRAT = 'DEM';
-const REPUBLICAN = 'GOP';
+// const DEMOCRAT = 'DEM';
+// const REPUBLICAN = 'GOP';
 
 var dateParser = d3.time.format('%d/%m/%Y');
 
@@ -82,6 +82,6 @@ d3.csv('./data/results.csv', (data) => {
       date : dateParser.parse(d.date)
     });
   });
-  console.log(data);
+  data = data.map(parseNumerics);
   store.dispatch(updateData(data));
 });
