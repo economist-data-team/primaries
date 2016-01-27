@@ -1,9 +1,12 @@
+import _ from 'lodash';
 import d3 from 'd3';
 import React from 'react';
 import RFD from 'react-faux-dom';
-import { Im, generateTranslateString } from './utilities.js';
+import { Im, generateTranslateString, addDOMProperty } from './utilities.js';
 
 import BoundedSVG from './bounded-svg.js';
+
+addDOMProperty('fontWeight', 'font-weight');
 
 export const DEMOCRAT = 'DEM';
 export const REPUBLICAN = 'GOP';
@@ -31,15 +34,16 @@ class USPrimaryElement extends React.Component {
       strokeWidth : 0.75
     };
     var circProps = {
-      r : this.props.dim/2,
+      r : this.props.dim/2 + 1, // we add 1 just to make things look nicer
       fill : this.props.colour,
       stroke : this.props.strokeColour,
       strokeWidth : 0.75
     };
+    var fontSize = 14;
     var textProps = {
-      fontSize : 14,
+      fontSize : fontSize,
       fontWeight : 'bold',
-      y : this.props.dim / 3,
+      y : fontSize / 2.75,
       textAnchor : 'middle'
     };
 
@@ -57,7 +61,7 @@ class USPrimaryElement extends React.Component {
 export default class USPrimaries extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
-      rectSize : 20,
+      rectSize : 22,
       party : REPUBLICAN,
       scale : d3.time.scale().range([10,585]).domain([
         new Date('01/30/2016'), new Date('06/10/2016')
@@ -73,7 +77,16 @@ export default class USPrimaries extends BoundedSVG {
     // sort out the party we want to show
     var data = this.props.data.filter(d => d.party === this.props.party);
 
-    var scale = this.props.scale.copy().range([this.leftBound, this.rightBound]);
+    // var scale = this.props.scale.copy().range([this.leftBound, this.rightBound]);
+
+    var scale = d3.scale.linear().range([
+      this.leftBound + this.props.rectSize / 2,
+      this.rightBound +  this.props.rectSize / 2
+    ]);
+
+    var primaryDates = _.uniq(data.map(d => d.date.getTime())).sort((a, b) => a - b);
+    console.log(primaryDates);
+    scale.domain([0, primaryDates.length]);
 
     var dateNester = d3.nest()
       .key(d => d.date);
@@ -84,9 +97,14 @@ export default class USPrimaries extends BoundedSVG {
       let states = grouped[date];
 
       let elements = states.map((d,i) => {
+        var dateIndex = primaryDates.indexOf(d.date.getTime());
         var props = Im.extend(d, {
           dim : this.props.rectSize,
-          position : [scale(d.date), i * (this.props.rectSize + 2) + this.margins.top]
+          position : [
+            scale(dateIndex),
+            i * (this.props.rectSize + 3) +
+              this.margins.top + this.props.rectSize / 2
+          ]
           // position : [i * -(this.props.rectSize + 2) + 200, scale(d.date)]
         });
         return (<USPrimaryElement {...props} />);
