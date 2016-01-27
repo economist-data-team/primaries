@@ -85,7 +85,6 @@ export default class USPrimaries extends BoundedSVG {
     ]);
 
     var primaryDates = _.uniq(data.map(d => d.date.getTime())).sort((a, b) => a - b);
-    console.log(primaryDates);
     scale.domain([0, primaryDates.length]);
 
     var dateNester = d3.nest()
@@ -112,8 +111,6 @@ export default class USPrimaries extends BoundedSVG {
 
       stateElements = stateElements.concat(elements);
     }
-
-    console.log(stateElements);
 
     return(<g>
       {stateElements}
