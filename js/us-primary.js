@@ -2,7 +2,8 @@ import _ from 'lodash';
 import d3 from 'd3';
 import React from 'react';
 import RFD from 'react-faux-dom';
-import { Im, generateTranslateString, addDOMProperty } from './utilities.js';
+import { Im, generateTranslateString, generateRectPolygonString, addDOMProperty } from './utilities.js';
+import colours from './econ_colours.js';
 
 import BoundedSVG from './bounded-svg.js';
 
@@ -10,6 +11,9 @@ addDOMProperty('fontWeight', 'font-weight');
 
 export const DEMOCRAT = 'DEM';
 export const REPUBLICAN = 'GOP';
+
+var months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
 class USPrimaryElement extends React.Component {
   static get defaultProps() {
@@ -58,6 +62,49 @@ class USPrimaryElement extends React.Component {
   }
 }
 
+class MonthGroup extends BoundedSVG {
+  static get defaultProps() {
+    return Im.extend(super.defaultProps, {
+
+    });
+  }
+  render() {
+    var scale = this.props.scale;
+    var cumulative = this.leftBound - 2;
+    var rects = this.props.monthSections.map((d, idx) => {
+      var width = scale(d) - scale(0);
+      var rectProps = {
+        fill : colours.aquamarine[1],
+        height : 15,
+        width : width - 2,
+        x : cumulative,
+        y : this.topBound
+      };
+      cumulative += width;
+      return (<rect {...rectProps} />);
+    });
+
+    cumulative = this.leftBound - 2;
+    var texts = this.props.monthSections.map((d, idx) => {
+      var width = scale(d) - scale(0);
+      var textProps = {
+        fontSize : 13,
+        fontWeight : 'bold',
+        textAnchor : 'middle',
+        x : cumulative + width / 2 - 1, // I have no idea why -1 works...
+        y : 22
+      };
+      cumulative += width;
+      return (<text {...textProps}>{months[idx].toUpperCase()}</text>);
+    });
+
+    return (<g>
+      {rects}
+      {texts}
+    </g>);
+  }
+}
+
 export default class USPrimaries extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
@@ -84,8 +131,18 @@ export default class USPrimaries extends BoundedSVG {
       this.rightBound +  this.props.rectSize / 2
     ]);
 
-    var primaryDates = _.uniq(data.map(d => d.date.getTime())).sort((a, b) => a - b);
-    scale.domain([0, primaryDates.length]);
+    var primaryDateComparisons = _.uniq(data.map(d => d.date.getTime())).sort((a, b) => a - b);
+    scale.domain([0, primaryDateComparisons.length]);
+
+    // this is super inefficient, but unfortunately necessary
+    var primaryDates = primaryDateComparisons.map(d => new Date(d));
+    var primaryMonths = primaryDates.map(d => d.getMonth());
+
+    var primaryMonthSections = primaryMonths.reduce((memo, n) => {
+      if(!memo[n]) { memo[n] = 0; }
+      memo[n] += 1;
+      return memo;
+    }, []);
 
     var dateNester = d3.nest()
       .key(d => d.date);
@@ -96,13 +153,13 @@ export default class USPrimaries extends BoundedSVG {
       let states = grouped[date];
 
       let elements = states.map((d,i) => {
-        var dateIndex = primaryDates.indexOf(d.date.getTime());
+        var dateIndex = primaryDateComparisons.indexOf(d.date.getTime());
         var props = Im.extend(d, {
           dim : this.props.rectSize,
           position : [
             scale(dateIndex),
             i * (this.props.rectSize + 3) +
-              this.margins.top + this.props.rectSize / 2
+              this.margins.top + this.props.rectSize / 2 + 20
           ]
           // position : [i * -(this.props.rectSize + 2) + 200, scale(d.date)]
         });
@@ -112,7 +169,14 @@ export default class USPrimaries extends BoundedSVG {
       stateElements = stateElements.concat(elements);
     }
 
+    var monthGroupProps = {
+      scale : scale,
+      monthSections : primaryMonthSections,
+      height: 30
+    };
+
     return(<g>
+      <MonthGroup {...monthGroupProps} />
       {stateElements}
     </g>);
   }
