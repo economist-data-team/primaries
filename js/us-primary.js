@@ -14,6 +14,7 @@ class USPrimaryElement extends React.Component {
       dim : 10,
       position : [0,0],
       colour : '#cccccc',
+      strokeColour : '#aaaaaa',
       state : undefined
     };
   }
@@ -25,11 +26,15 @@ class USPrimaryElement extends React.Component {
       height : this.props.dim,
       x : -this.props.dim / 2,
       y : -this.props.dim / 2,
-      fill : this.props.colour
+      fill : this.props.colour,
+      stroke : this.props.strokeColour,
+      strokeWidth : 0.75
     };
     var circProps = {
       r : this.props.dim/2,
-      fill : this.props.colour
+      fill : this.props.colour,
+      stroke : this.props.strokeColour,
+      strokeWidth : 0.75
     };
     var textProps = {
       fontSize : 14,
@@ -82,6 +87,7 @@ export default class USPrimaries extends BoundedSVG {
         var props = Im.extend(d, {
           dim : this.props.rectSize,
           position : [scale(d.date), i * (this.props.rectSize + 2) + this.margins.top]
+          // position : [i * -(this.props.rectSize + 2) + 200, scale(d.date)]
         });
         return (<USPrimaryElement {...props} />);
       });
