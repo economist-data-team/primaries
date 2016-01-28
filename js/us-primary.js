@@ -17,6 +17,22 @@ var months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
 class USPrimaryElement extends React.Component {
+  constructor(props, ...args) {
+    super(props, ...args);
+    this.state = mapToObject(this.transitionableProps, props);
+    this.animationStep = this.animationStep.bind(this);
+  }
+  componentWillReceiveProps(newProps) {
+    d3.timer(this.animationStep);
+    this.interpolators = mapToObject(this.transitionableProps, k => d3.interpolate(this.state[k], newProps[k]));
+  }
+  animationStep(ms) {
+    var progress = Math.min(1, ms / this.props.duration);
+    this.setState(mapToObject(this.transitionableProps, k => this.interpolators[k](progress)));
+    // if we're done, end the animation
+    if(progress === 1) { return true; }
+    return false;
+  }
   static get defaultProps() {
     return {
       dim : 10,
@@ -24,11 +40,12 @@ class USPrimaryElement extends React.Component {
       y : 0,
       colour : '#cccccc',
       strokeColour : '#aaaaaa',
-      state : undefined
+      state : undefined,
+      duration: 300
     };
   }
   get position() {
-    return [this.props.x, this.props.y];
+    return [this.state.x, this.state.y];
   }
   render() {
     var translate = generateTranslateString(...this.position);
@@ -66,6 +83,7 @@ class USPrimaryElement extends React.Component {
     </g>);
   }
 }
+USPrimaryElement.prototype.transitionableProps = ['x', 'y'];
 
 class MonthBar extends React.Component {
   static get defaultProps() {
@@ -81,8 +99,7 @@ class MonthBar extends React.Component {
   }
   componentWillReceiveProps(newProps) {
     d3.timer(this.animationStep);
-    console.log(this.props, newProps);
-    this.interpolators = mapToObject(this.transitionableProps, k => d3.interpolate(this.props[k], newProps[k]));
+    this.interpolators = mapToObject(this.transitionableProps, k => d3.interpolate(this.state[k], newProps[k]));
   }
   animationStep(ms) {
     var progress = Math.min(1, ms / this.props.duration);
@@ -117,7 +134,7 @@ MonthBar.prototype.transitionableProps = ['width', 'height', 'x', 'y'];
 class MonthGroup extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
-
+      duration : 300
     });
   }
   render() {
@@ -126,10 +143,12 @@ class MonthGroup extends BoundedSVG {
     var monthElements = this.props.monthSections.map((d,idx) => {
       var width = scale(d) - scale(0);
       var monthProps = {
+        duration : this.props.duration,
         height : 15,
         width : width - 2,
         x : cumulative,
         y : this.topBound,
+        key : months[idx].toUpperCase(),
         label : months[idx].toUpperCase()
       }
       cumulative += width;
@@ -145,6 +164,7 @@ class MonthGroup extends BoundedSVG {
 export default class USPrimaries extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
+      duration : 250,
       rectSize : 22,
       party : DEMOCRAT,
       scale : d3.time.scale().range([10,585]).domain([
@@ -192,6 +212,8 @@ export default class USPrimaries extends BoundedSVG {
       let elements = states.map((d,i) => {
         var dateIndex = primaryDateComparisons.indexOf(d.date.getTime());
         var props = Im.extend(d, {
+          key : d.state,
+          duration : this.props.duration,
           dim : this.props.rectSize,
           x : scale(dateIndex),
           y: i * (this.props.rectSize + 3) +
@@ -206,6 +228,7 @@ export default class USPrimaries extends BoundedSVG {
 
     var monthGroupProps = {
       scale : scale,
+      duration : this.props.duration,
       monthSections : primaryMonthSections,
       height: 30
     };
