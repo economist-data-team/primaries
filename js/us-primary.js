@@ -2,7 +2,8 @@ import _ from 'lodash';
 import d3 from 'd3';
 import React from 'react';
 import RFD from 'react-faux-dom';
-import { Im, generateTranslateString, generateRectPolygonString, addDOMProperty } from './utilities.js';
+import { Im, mapToObject, generateTranslateString,
+  generateRectPolygonString, addDOMProperty } from './utilities.js';
 import colours from './econ_colours.js';
 
 import BoundedSVG from './bounded-svg.js';
@@ -19,14 +20,18 @@ class USPrimaryElement extends React.Component {
   static get defaultProps() {
     return {
       dim : 10,
-      position : [0,0],
+      x : 0,
+      y : 0,
       colour : '#cccccc',
       strokeColour : '#aaaaaa',
       state : undefined
     };
   }
+  get position() {
+    return [this.props.x, this.props.y];
+  }
   render() {
-    var translate = generateTranslateString(...this.props.position);
+    var translate = generateTranslateString(...this.position);
 
     var rectProps = {
       width : this.props.dim,
@@ -62,6 +67,53 @@ class USPrimaryElement extends React.Component {
   }
 }
 
+class MonthBar extends React.Component {
+  static get defaultProps() {
+    return {
+      duration : 150,
+      rectColour : colours.aquamarine[1]
+    };
+  }
+  constructor(props, ...args) {
+    super(props, ...args);
+    this.state = mapToObject(this.transitionableProps, props);
+    this.animationStep = this.animationStep.bind(this);
+  }
+  componentWillReceiveProps(newProps) {
+    d3.timer(this.animationStep);
+    console.log(this.props, newProps);
+    this.interpolators = mapToObject(this.transitionableProps, k => d3.interpolate(this.props[k], newProps[k]));
+  }
+  animationStep(ms) {
+    var progress = Math.min(1, ms / this.props.duration);
+    this.setState(mapToObject(this.transitionableProps, k => this.interpolators[k](progress)));
+    // if we're done, end the animation
+    if(progress === 1) { return true; }
+    return false;
+  }
+  render() {
+    var rectProps = {
+      fill : this.props.rectColour,
+      height : this.state.height,
+      width : this.state.width,
+      x : this.state.x,
+      y : this.state.y
+    };
+    var textProps = {
+      className : 'month-label',
+      x : this.state.x + this.state.width / 2,
+      y : 22,
+      textAnchor : 'middle'
+    };
+
+    return (<g>
+      <rect {...rectProps}/>
+      <text {...textProps}>{this.props.label}</text>
+    </g>);
+  }
+}
+MonthBar.prototype.transitionableProps = ['width', 'height', 'x', 'y'];
+
 class MonthGroup extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
@@ -71,36 +123,21 @@ class MonthGroup extends BoundedSVG {
   render() {
     var scale = this.props.scale;
     var cumulative = this.leftBound - 2;
-    var rects = this.props.monthSections.map((d, idx) => {
+    var monthElements = this.props.monthSections.map((d,idx) => {
       var width = scale(d) - scale(0);
-      var rectProps = {
-        fill : colours.aquamarine[1],
+      var monthProps = {
         height : 15,
         width : width - 2,
         x : cumulative,
-        y : this.topBound
-      };
+        y : this.topBound,
+        label : months[idx].toUpperCase()
+      }
       cumulative += width;
-      return (<rect {...rectProps} />);
-    });
-
-    cumulative = this.leftBound - 2;
-    var texts = this.props.monthSections.map((d, idx) => {
-      var width = scale(d) - scale(0);
-      var textProps = {
-        fontSize : 13,
-        fontWeight : 'bold',
-        textAnchor : 'middle',
-        x : cumulative + width / 2 - 1, // I have no idea why -1 works...
-        y : 22
-      };
-      cumulative += width;
-      return (<text {...textProps}>{months[idx].toUpperCase()}</text>);
+      return (<MonthBar {...monthProps} />);
     });
 
     return (<g>
-      {rects}
-      {texts}
+      {monthElements}
     </g>);
   }
 }
@@ -156,11 +193,9 @@ export default class USPrimaries extends BoundedSVG {
         var dateIndex = primaryDateComparisons.indexOf(d.date.getTime());
         var props = Im.extend(d, {
           dim : this.props.rectSize,
-          position : [
-            scale(dateIndex),
-            i * (this.props.rectSize + 3) +
-              this.margins.top + this.props.rectSize / 2 + 20
-          ]
+          x : scale(dateIndex),
+          y: i * (this.props.rectSize + 3) +
+            this.margins.top + this.props.rectSize / 2 + 20
           // position : [i * -(this.props.rectSize + 2) + 200, scale(d.date)]
         });
         return (<USPrimaryElement {...props} />);

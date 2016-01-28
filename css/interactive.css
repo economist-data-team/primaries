@@ -1,3 +1,6 @@
 /* project-specific CSS belongs here */
 
-/* intentionally empty */
+.month-label {
+  font-size : 13px;
+  font-weight : bold;
+}
