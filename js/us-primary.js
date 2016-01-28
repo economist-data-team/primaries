@@ -183,22 +183,68 @@ class MonthGroup extends BoundedSVG {
 
 class PrimaryTrace extends React.Component {
   render() {
-    return (<g></g>);
+    var el = RFD.createElement('g');
+    var sel = d3.select(el);
+
+    var pathFn = d3.svg.line()
+      .x((d,idx) => this.props.xScale(idx))
+      .y((d,idx) => this.props.yScale(d.delegates[idx]));
+
+    return el.toReact();
   }
 }
 class PrimaryGraph extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
+      candidates : []
     });
   }
   render() {
-    var traces = this.props.candidates.map(d => {
-      return (<PrimaryTrace />);
+    var el = RFD.createElement('g');
+    var sel = d3.select(el);
+
+    var xScale = this.props.xScale;
+    var yScale = this.props.yScale.copy().range([
+      this.bottomBound, this.topBound
+    ]);
+
+    var pathFn = d3.svg.line()
+      .x((d,idx) => xScale(idx))
+      .y((d,idx) => yScale(d));
+
+    var join = sel.selectAll('.trace')
+      .data(this.props.candidates);
+
+    join.enter().append('svg:path')
+      .classed('trace', true);
+
+    join.exit().remove();
+
+    join.attr({
+      fill : 'none',
+      stroke : 'black',
+      d : d => pathFn(
+        d.delegates.slice(0, this.props.lastEnteredElection + 1)
+      )
     });
 
-    return (<g>
-      {traces}
-    </g>);
+    return el.toReact();
+
+    // var traces = this.props.candidates.map(d => {
+    //   console.log(d);
+    //   var traceProps = {
+    //     key : d.key,
+    //     xScale : xScale,
+    //     yScale : yScale,
+    //     data : d
+    //   };
+    //
+    //   return (<PrimaryTrace {...traceProps} />);
+    // });
+    //
+    // return (<g>
+    //   {traces}
+    // </g>);
   }
 }
 
@@ -307,7 +353,7 @@ export default class USPrimaries extends BoundedSVG {
 
     var primaryGraphProps = {
       xScale : scale,
-      yScale : d3.scale.linear(),
+      yScale : d3.scale.linear().domain([0, 2000]),
       duration : this.props.duration,
       height : 200,
       candidates : candidateTallies,
