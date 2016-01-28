@@ -287,12 +287,31 @@ export default class USPrimaries extends BoundedSVG {
       });
     });
 
+    // we also need to know how far to go...
+    // we're making a key assumption here: that the total number
+    // of allocated delegates can only go up over time
+    var lastEnteredElection = primaryDates.map((d,idx) => {
+      // this gives us the sum of delegates allocated at each step
+      return candidateTallies.map(c => c.delegates[idx]).reduce(
+        (memo, n) => memo + n, 0
+      );
+    }).reduce((memo, n, idx, ary) => {
+      // slightly annoying to grab this every time, but DOWN WITH
+      // PREMATURE OPTIMIZATION, I SAY!
+      var lastValue = ary[ary.length - 1];
+      // note that the memo lags the index by one here, which means
+      // the final output of the reduce is going to be one less than
+      // the number we actually want
+      return n === lastValue ? memo : idx;
+    }, 0) + 1;
+
     var primaryGraphProps = {
       xScale : scale,
       yScale : d3.scale.linear(),
       duration : this.props.duration,
       height : 200,
-      candidates : candidateTallies
+      candidates : candidateTallies,
+      lastEnteredElection : lastEnteredElection
     };
 
     return(<g>
