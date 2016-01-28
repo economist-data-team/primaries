@@ -109,7 +109,7 @@ export default class USPrimaries extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
       rectSize : 22,
-      party : REPUBLICAN,
+      party : DEMOCRAT,
       scale : d3.time.scale().range([10,585]).domain([
         new Date('01/30/2016'), new Date('06/10/2016')
       ])

@@ -17,7 +17,7 @@ import chroma from 'chroma-js';
 import { createStore, compose } from 'redux';
 import { connect, Provider } from 'react-redux';
 
-import { updateData } from './actions.js';
+import { updateData, updateParty } from './actions.js';
 import updateState from './reducers.js'
 
 // var store = createStore(updateState);
@@ -28,16 +28,32 @@ var store = DEBUGCREATESTORE(updateState);
 window.store = store;
 
 var USPrimaries = connectMap({
-  data : 'data'
+  data : 'data',
+  party : 'party'
 })(USPrimariesRaw);
+var ToggleBar = connectMap({
+  value : 'party'
+})(ToggleBarRaw);
 
 class Chart extends ChartContainer {
   render() {
+    var toggleProps = {
+      items : [
+        { title : 'Democrats', key : DEMOCRAT, value : DEMOCRAT },
+        { title : 'Republicans', key : REPUBLICAN, value : REPUBLICAN }
+      ],
+      action : v => store.dispatch(updateParty(v))
+    };
+    var primaryProps = {
+
+    };
+
     return(
       <div className='chart-container'>
         <Header title="To come" subtitle="Also to come"/>
+        <ToggleBar {...toggleProps} />
         <svg width="595" height="400">
-          <USPrimaries />
+          <USPrimaries {...primaryProps} />
         </svg>
       </div>
     );
@@ -46,9 +62,6 @@ class Chart extends ChartContainer {
 var props = {
   height : 320
 };
-
-// const DEMOCRAT = 'DEM';
-// const REPUBLICAN = 'GOP';
 
 var dateParser = d3.time.format('%d/%m/%Y');
 

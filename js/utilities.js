@@ -246,6 +246,10 @@ export var Im = {
 };
 
 
+/////////////////////
+// REDUX UTILITIES //
+/////////////////////
+
 /**
  * a utility function for connect
  *
@@ -268,6 +272,26 @@ export function connectMap(map) {
     return Im.extend(ownProps, r);
   });
 }
+
+/**
+ * a utility function for creating generic reducers
+ *
+ * @param {*} defaultState - the initial state of the property; this
+ *                           will generally be a reference to
+ *                           `initialState.foo`
+ * @param {String} actionName - the name of the action associated with
+ *                              this reducer
+ *
+ * @return {*} - the new value of the action (pulled from the action's
+ *               data attribute)
+ */
+export function generateReducer(defaultState, actionName) {
+  return function(state = defaultState, action) {
+    if(action.type !== actionName) { return state; }
+    return action.data;
+  }
+}
+
 
 
 //////////////////////////////////
