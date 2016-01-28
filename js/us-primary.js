@@ -13,6 +13,26 @@ addDOMProperty('fontWeight', 'font-weight');
 export const DEMOCRAT = 'DEM';
 export const REPUBLICAN = 'GOP';
 
+// const is not a real thing here but w/e
+export const CANDIDATES = [
+  { party : DEMOCRAT, 'key' : 'clinton', name : 'Hillary Clinton' },
+  { party : DEMOCRAT, 'key' : 'omalley', name : 'Martin O’Malley' },
+  { party : DEMOCRAT, 'key' : 'sanders', name : 'Bernie Sanders' },
+
+  { party : REPUBLICAN, 'key' : 'bush', name : 'Jeb Bush' },
+  { party : REPUBLICAN, 'key' : 'carson', name : 'Ben Carson' },
+  { party : REPUBLICAN, 'key' : 'christie', name : 'Chris Christie' },
+  { party : REPUBLICAN, 'key' : 'cruz', name : 'Ted Cruz' },
+  { party : REPUBLICAN, 'key' : 'fiorina', name : 'Carly Fiorina' },
+  { party : REPUBLICAN, 'key' : 'gilmore', name : 'Jim Gilmore' },
+  { party : REPUBLICAN, 'key' : 'huckabee', name : 'Mike Huckabee' },
+  { party : REPUBLICAN, 'key' : 'kasich', name : 'John Kasich' },
+  { party : REPUBLICAN, 'key' : 'paul', name : 'Rand Paul' },
+  { party : REPUBLICAN, 'key' : 'rubio', name : 'Marco Rubio' },
+  { party : REPUBLICAN, 'key' : 'santorum', name : 'Rick Santorum' },
+  { party : REPUBLICAN, 'key' : 'trump', name : 'Donald Trump' }
+];
+
 var months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
@@ -161,6 +181,27 @@ class MonthGroup extends BoundedSVG {
   }
 }
 
+class PrimaryTrace extends React.Component {
+  render() {
+    return (<g></g>);
+  }
+}
+class PrimaryGraph extends BoundedSVG {
+  static get defaultProps() {
+    return Im.extend(super.defaultProps, {
+    });
+  }
+  render() {
+    var traces = this.props.candidates.map(d => {
+      return (<PrimaryTrace />);
+    });
+
+    return (<g>
+      {traces}
+    </g>);
+  }
+}
+
 export default class USPrimaries extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
@@ -173,15 +214,10 @@ export default class USPrimaries extends BoundedSVG {
     });
   }
   render() {
-    // var el = RFD.createElement('g');
-    // var sel = d3.select(el);
-    //
-    // return el.toReact();
-
     // sort out the party we want to show
     var data = this.props.data.filter(d => d.party === this.props.party);
 
-    // var scale = this.props.scale.copy().range([this.leftBound, this.rightBound]);
+    var candidates = CANDIDATES.filter(d => d.party === this.props.party);
 
     var scale = d3.scale.linear().range([
       this.leftBound + this.props.rectSize / 2,
@@ -233,9 +269,38 @@ export default class USPrimaries extends BoundedSVG {
       height: 30
     };
 
+    // now let's work out their delegate tallies
+    var candidateTallies = candidates.map(d => {
+      var dateTallies = primaryDates.map(date => {
+        var individualPrimaries = grouped[date];
+        // the || is just to make sure we don't end up with strings
+        return individualPrimaries.reduce(
+          (memo, p) => memo + (p[`${d.key}_del`] || 0), 0
+        )
+      });
+      return Im.extend(d, {
+        delegates : dateTallies.map(
+          (dT,idx) => dateTallies.slice(0, idx+1).reduce(
+            (memo,n) => memo + n, 0
+          )
+        )
+      });
+    });
+
+    var primaryGraphProps = {
+      xScale : scale,
+      yScale : d3.scale.linear(),
+      duration : this.props.duration,
+      height : 200,
+      candidates : candidateTallies
+    };
+
     return(<g>
-      <MonthGroup {...monthGroupProps} />
-      {stateElements}
+      <PrimaryGraph {...primaryGraphProps} />
+      <g transform="translate(0, 200)">
+        <MonthGroup {...monthGroupProps} />
+        {stateElements}
+      </g>
     </g>);
   }
 }

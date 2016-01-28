@@ -65,25 +65,6 @@ var props = {
 
 var dateParser = d3.time.format('%d/%m/%Y');
 
-var candidates = [
-  { party : DEMOCRAT, 'key' : 'clinton', name : 'Hillary Clinton' },
-  { party : DEMOCRAT, 'key' : 'omalley', name : 'Martin O’Malley' },
-  { party : DEMOCRAT, 'key' : 'sanders', name : 'Bernie Sanders' },
-
-  { party : REPUBLICAN, 'key' : 'bush', name : 'Jeb Bush' },
-  { party : REPUBLICAN, 'key' : 'carson', name : 'Ben Carson' },
-  { party : REPUBLICAN, 'key' : 'christie', name : 'Chris Christie' },
-  { party : REPUBLICAN, 'key' : 'cruz', name : 'Ted Cruz' },
-  { party : REPUBLICAN, 'key' : 'fiorina', name : 'Carly Fiorina' },
-  { party : REPUBLICAN, 'key' : 'gilmore', name : 'Jim Gilmore' },
-  { party : REPUBLICAN, 'key' : 'huckabee', name : 'Mike Huckabee' },
-  { party : REPUBLICAN, 'key' : 'kasich', name : 'John Kasich' },
-  { party : REPUBLICAN, 'key' : 'paul', name : 'Rand Paul' },
-  { party : REPUBLICAN, 'key' : 'rubio', name : 'Marco Rubio' },
-  { party : REPUBLICAN, 'key' : 'santorum', name : 'Rick Santorum' },
-  { party : REPUBLICAN, 'key' : 'trump', name : 'Donald Trump' }
-];
-
 var chart = React.render(
   <Provider store={store}>
     {() => <Chart {...props} />}
