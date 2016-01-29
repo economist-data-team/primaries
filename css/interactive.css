@@ -4,3 +4,10 @@
   font-size : 13px;
   font-weight : bold;
 }
+
+.trace-label {
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: bold;
+  fill: white;
+}

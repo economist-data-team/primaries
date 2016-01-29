@@ -10,32 +10,53 @@ import BoundedSVG from './bounded-svg.js';
 
 addDOMProperty('fontWeight', 'font-weight');
 
+function guarantee(parent, classSelector, type) {
+  var sel = d3.select(parent)
+  var out = sel.select(`.${classSelector}`);
+  // console.log(out[0][0]);
+  // why it's [0][0] I have no idea
+  return out[0][0] ? out : sel.append(type)
+    .classed(classSelector, true);
+}
+
 export const DEMOCRAT = 'DEM';
 export const REPUBLICAN = 'GOP';
 
 // const is not a real thing here but w/e
 export const CANDIDATES = [
-  { party : DEMOCRAT, 'key' : 'clinton', name : 'Hillary Clinton' },
-  { party : DEMOCRAT, 'key' : 'omalley', name : 'Martin O’Malley' },
-  { party : DEMOCRAT, 'key' : 'sanders', name : 'Bernie Sanders' },
+  { party : DEMOCRAT, key : 'clinton', displaySurname : 'Clinton', name : 'Hillary Clinton' },
+  { party : DEMOCRAT, key : 'omalley', displaySurname : 'O’Malley', name : 'Martin O’Malley' },
+  { party : DEMOCRAT, key : 'sanders', displaySurname : 'Sanders', name : 'Bernie Sanders' },
 
-  { party : REPUBLICAN, 'key' : 'bush', name : 'Jeb Bush' },
-  { party : REPUBLICAN, 'key' : 'carson', name : 'Ben Carson' },
-  { party : REPUBLICAN, 'key' : 'christie', name : 'Chris Christie' },
-  { party : REPUBLICAN, 'key' : 'cruz', name : 'Ted Cruz' },
-  { party : REPUBLICAN, 'key' : 'fiorina', name : 'Carly Fiorina' },
-  { party : REPUBLICAN, 'key' : 'gilmore', name : 'Jim Gilmore' },
-  { party : REPUBLICAN, 'key' : 'huckabee', name : 'Mike Huckabee' },
-  { party : REPUBLICAN, 'key' : 'kasich', name : 'John Kasich' },
-  { party : REPUBLICAN, 'key' : 'paul', name : 'Rand Paul' },
-  { party : REPUBLICAN, 'key' : 'rubio', name : 'Marco Rubio' },
-  { party : REPUBLICAN, 'key' : 'santorum', name : 'Rick Santorum' },
-  { party : REPUBLICAN, 'key' : 'trump', name : 'Donald Trump' }
+  { party : REPUBLICAN, key : 'bush', displaySurname : 'Bush', name : 'Jeb Bush' },
+  { party : REPUBLICAN, key : 'carson', displaySurname : 'Carson', name : 'Ben Carson' },
+  { party : REPUBLICAN, key : 'christie', displaySurname : 'Christie', name : 'Chris Christie' },
+  { party : REPUBLICAN, key : 'cruz', displaySurname : 'Cruz', name : 'Ted Cruz' },
+  { party : REPUBLICAN, key : 'fiorina', displaySurname : 'Fiorina', name : 'Carly Fiorina' },
+  { party : REPUBLICAN, key : 'gilmore', displaySurname : 'Gilmore', name : 'Jim Gilmore' },
+  { party : REPUBLICAN, key : 'huckabee', displaySurname : 'Huckabee', name : 'Mike Huckabee' },
+  { party : REPUBLICAN, key : 'kasich', displaySurname : 'Kasich', name : 'John Kasich' },
+  { party : REPUBLICAN, key : 'paul', displaySurname : 'Paul', name : 'Rand Paul' },
+  { party : REPUBLICAN, key : 'rubio', displaySurname : 'Rubio', name : 'Marco Rubio' },
+  { party : REPUBLICAN, key : 'santorum', displaySurname : 'Santorum', name : 'Rick Santorum' },
+  { party : REPUBLICAN, key : 'trump', displaySurname : 'Trump', name : 'Donald Trump' }
 ];
+
+// oh god, this is an absurd, but the only way of getting these widths right
+var canvas = document.createElement('canvas');
+var ctx = canvas.getContext('2d');
+ctx.font = 'bold 13px Officina, Calibri, Arial, sans-serif, Lucida Grande, Arial Unicode MS'
+// told you const is not a thing here
+CANDIDATES.forEach(d => {
+  d.displaySurnameWidth = ctx.measureText(d.displaySurname.toUpperCase()).width
+});
+
+console.log(CANDIDATES);
+
 const PRIMARIES = {
   DEM : {
     fullDelegateCount : 4764,
-    colours : ['#005994','#7199ad','#2eb6bc']
+    colours : ['#005994','#2eb6bc','#7199ad']
   },
   GOP : {
     fullDelegateCount : 2472,
@@ -206,14 +227,21 @@ class PrimaryTrace extends React.Component {
   }
 }
 class PrimaryGraph extends BoundedSVG {
+  constructor(...args) {
+    super(...args);
+    this.el = RFD.createElement('g');
+  }
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
       candidates : []
     });
   }
   render() {
-    var el = RFD.createElement('g');
+    var el = this.el;
     var sel = d3.select(el);
+
+    var lastEnteredElection = this.props.lastEnteredElection;
+    var numPrimaries = this.props.numPrimaries;
 
     var xScale = this.props.xScale;
     var yScale = this.props.yScale.copy().range([
@@ -225,15 +253,15 @@ class PrimaryGraph extends BoundedSVG {
       .y((d,idx) => yScale(d))
       .interpolate('step');
 
-    var join = sel.selectAll('.trace')
+    var traceJoin = sel.selectAll('.trace')
       .data(this.props.candidates);
 
-    join.enter().append('svg:path')
+    traceJoin.enter().append('svg:path')
       .classed('trace', true);
 
-    join.exit().remove();
+    traceJoin.exit().remove();
 
-    join.attr({
+    traceJoin.attr({
       fill : 'none',
       stroke : d => d.colour,
       strokeWidth: 2,
@@ -241,6 +269,35 @@ class PrimaryGraph extends BoundedSVG {
         d.delegates.slice(0, this.props.lastEnteredElection + 1)
       )
     });
+
+    var padding = 5;
+
+    var labelJoin = sel.selectAll('.trace-label-container')
+      .data(this.props.candidates);
+
+    labelJoin.enter().append('svg:g')
+      .classed('trace-label-container', true);
+    labelJoin.exit().remove();
+    labelJoin
+      .attr('transform', d => generateTranslateString(
+        xScale(lastEnteredElection) + 5,
+        yScale(d.delegates[numPrimaries - 1])
+      ))
+      .each(function(d) {
+        var rect = guarantee(this, 'trace-bg', 'svg:rect')
+          .attr({
+            fill : d.colour,
+            width : ctx.measureText(d.displaySurname.toUpperCase()).width + padding * 2,
+            height : 18,
+            y : -9
+          });
+        var text = guarantee(this, 'trace-label', 'svg:text')
+          .text(d.displaySurname)
+          .attr({
+            y : 4,
+            x : padding
+          });
+      });
 
     return el.toReact();
 
@@ -382,7 +439,8 @@ export default class USPrimaries extends BoundedSVG {
       duration : this.props.duration,
       height : 150,
       candidates : candidateTallies,
-      lastEnteredElection : lastEnteredElection
+      lastEnteredElection : lastEnteredElection,
+      numPrimaries : numPrimaries
     };
 
     return(<g>
