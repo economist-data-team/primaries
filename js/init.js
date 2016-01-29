@@ -22,7 +22,7 @@ import updateState from './reducers.js'
 
 // var store = createStore(updateState);
 const DEBUGCREATESTORE = compose(
-  window.devToolsExtension() || (f => f)
+  window.devToolsExtension && window.devToolsExtension() || (f => f)
 )(createStore);
 var store = DEBUGCREATESTORE(updateState);
 window.store = store;
@@ -52,7 +52,7 @@ class Chart extends ChartContainer {
       <div className='chart-container'>
         <Header title="To come" subtitle="Also to come"/>
         <ToggleBar {...toggleProps} />
-        <svg width="595" height="400">
+        <svg width="595" height="550">
           <USPrimaries {...primaryProps} />
         </svg>
       </div>

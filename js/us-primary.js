@@ -32,6 +32,17 @@ export const CANDIDATES = [
   { party : REPUBLICAN, 'key' : 'santorum', name : 'Rick Santorum' },
   { party : REPUBLICAN, 'key' : 'trump', name : 'Donald Trump' }
 ];
+const PRIMARIES = {
+  DEM : {
+    fullDelegateCount : 4764,
+    colours : ['#005994','#7199ad','#2eb6bc']
+  },
+  GOP : {
+    fullDelegateCount : 2472,
+    colours : ['#e30613','#ed5755','#f49a99','#ce96a1','#a25e7f','#941247',
+               '#866b67','#ccaf88','#fed700','#f0ae00','#cd881d','#ea5f10']
+  }
+}
 
 var months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
@@ -188,7 +199,8 @@ class PrimaryTrace extends React.Component {
 
     var pathFn = d3.svg.line()
       .x((d,idx) => this.props.xScale(idx))
-      .y((d,idx) => this.props.yScale(d.delegates[idx]));
+      .y((d,idx) => this.props.yScale(d.delegates[idx]))
+      .interpolate('step-after');
 
     return el.toReact();
   }
@@ -210,7 +222,8 @@ class PrimaryGraph extends BoundedSVG {
 
     var pathFn = d3.svg.line()
       .x((d,idx) => xScale(idx))
-      .y((d,idx) => yScale(d));
+      .y((d,idx) => yScale(d))
+      .interpolate('step');
 
     var join = sel.selectAll('.trace')
       .data(this.props.candidates);
@@ -222,7 +235,8 @@ class PrimaryGraph extends BoundedSVG {
 
     join.attr({
       fill : 'none',
-      stroke : 'black',
+      stroke : d => d.colour,
+      strokeWidth: 2,
       d : d => pathFn(
         d.delegates.slice(0, this.props.lastEnteredElection + 1)
       )
@@ -264,6 +278,8 @@ export default class USPrimaries extends BoundedSVG {
     var data = this.props.data.filter(d => d.party === this.props.party);
 
     var candidates = CANDIDATES.filter(d => d.party === this.props.party);
+
+    var primary = PRIMARIES[this.props.party];
 
     var scale = d3.scale.linear().range([
       this.leftBound + this.props.rectSize / 2,
@@ -316,6 +332,7 @@ export default class USPrimaries extends BoundedSVG {
     };
 
     // now let's work out their delegate tallies
+    var numPrimaries = primaryDates.length;
     var candidateTallies = candidates.map(d => {
       var dateTallies = primaryDates.map(date => {
         var individualPrimaries = grouped[date];
@@ -331,38 +348,46 @@ export default class USPrimaries extends BoundedSVG {
           )
         )
       });
-    });
+    }).sort(
+      (a,b) => b.delegates[numPrimaries - 1] - a.delegates[numPrimaries - 1]
+    ).map((d,idx) => Im.extend(d, { colour : primary.colours[idx] }));
 
     // we also need to know how far to go...
+    var maximumDelegates = 0;
     // we're making a key assumption here: that the total number
     // of allocated delegates can only go up over time
     var lastEnteredElection = primaryDates.map((d,idx) => {
       // this gives us the sum of delegates allocated at each step
       return candidateTallies.map(c => c.delegates[idx]).reduce(
-        (memo, n) => memo + n, 0
+        (memo, n) => {
+          maximumDelegates = Math.max(maximumDelegates, n);
+          return memo + n;
+        }, 0
       );
     }).reduce((memo, n, idx, ary) => {
       // slightly annoying to grab this every time, but DOWN WITH
       // PREMATURE OPTIMIZATION, I SAY!
-      var lastValue = ary[ary.length - 1];
+      var lastCount = ary[ary.length - 1];
       // note that the memo lags the index by one here, which means
       // the final output of the reduce is going to be one less than
       // the number we actually want
-      return n === lastValue ? memo : idx;
+      return n === lastCount ? memo : idx;
     }, 0) + 1;
+
+    maximumDelegates = Math.min(maximumDelegates * 1.1, primary.fullDelegateCount);
 
     var primaryGraphProps = {
       xScale : scale,
-      yScale : d3.scale.linear().domain([0, 2000]),
+      yScale : d3.scale.linear().domain([0, maximumDelegates]),
       duration : this.props.duration,
-      height : 200,
+      height : 150,
       candidates : candidateTallies,
       lastEnteredElection : lastEnteredElection
     };
 
     return(<g>
       <PrimaryGraph {...primaryGraphProps} />
-      <g transform="translate(0, 200)">
+      <g transform="translate(0, 150)">
         <MonthGroup {...monthGroupProps} />
         {stateElements}
       </g>
