@@ -336,15 +336,16 @@ class PrimaryGraph extends BoundedSVG {
         yScale(d.delegates[numPrimaries - 1])
       ))
       .each(function(d) {
+        var label = `${d.displaySurname} ${d.delegates[lastEnteredElection]}`;
         var rect = guarantee(this, 'trace-bg', 'svg:rect')
           .attr({
             fill : d.colour,
-            width : ctx.measureText(d.displaySurname.toUpperCase()).width + padding * 2,
+            width : ctx.measureText(label.toUpperCase()).width + padding * 2,
             height : 18,
             y : -9
           });
         var text = guarantee(this, 'trace-label', 'svg:text')
-          .text(d.displaySurname)
+          .text(label)
           .attr({
             y : 4,
             x : padding
