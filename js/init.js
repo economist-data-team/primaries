@@ -51,7 +51,9 @@ class Chart extends ChartContainer {
     return(
       <div className='chart-container'>
         <Header title="To come" subtitle="Also to come"/>
-        <ToggleBar {...toggleProps} />
+          <div className="party-toggle-container">
+            <ToggleBar {...toggleProps} />
+          </div>
         <svg width="595" height="550">
           <USPrimaries {...primaryProps} />
         </svg>

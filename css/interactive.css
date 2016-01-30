@@ -11,3 +11,8 @@
   font-weight: bold;
   fill: white;
 }
+
+.party-toggle-container {
+  max-width: 240px;
+  margin : 0 auto;
+}

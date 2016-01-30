@@ -51,7 +51,7 @@ CANDIDATES.forEach(d => {
   d.displaySurnameWidth = ctx.measureText(d.displaySurname.toUpperCase()).width
 });
 
-console.log(CANDIDATES);
+// console.log(CANDIDATES);
 
 const PRIMARIES = {
   DEM : {
@@ -226,6 +226,7 @@ class PrimaryTrace extends React.Component {
     return el.toReact();
   }
 }
+var primaryGraphPadding = 5;
 class PrimaryGraph extends BoundedSVG {
   constructor(...args) {
     super(...args);
@@ -236,9 +237,24 @@ class PrimaryGraph extends BoundedSVG {
       candidates : []
     });
   }
+  d3render() {
+    // this is a postfix for the label widths
+    var sel = this.selectRef('main');
+    var padding = primaryGraphPadding;
+
+    var labelContainers = sel.selectAll('.trace-label-container');
+    labelContainers.each(function() {
+      var sel = d3.select(this);
+      var textWidth = sel.select('text').node().getBoundingClientRect().width;
+      sel.select('rect').attr({
+        width : textWidth + padding * 2
+      })
+    });
+  }
   render() {
     var el = this.el;
     var sel = d3.select(el);
+    sel.attr({ ref : 'main' });
 
     var lastEnteredElection = this.props.lastEnteredElection;
     var numPrimaries = this.props.numPrimaries;
@@ -270,10 +286,15 @@ class PrimaryGraph extends BoundedSVG {
       )
     });
 
-    var padding = 5;
+    var padding = primaryGraphPadding;
+
+    // we'll only show the first six, because let's not go mad
+    var labeledCandidates = this.props.candidates.slice(0,6);
+
+    var theForce = d3.layout.force();
 
     var labelJoin = sel.selectAll('.trace-label-container')
-      .data(this.props.candidates);
+      .data(labeledCandidates);
 
     labelJoin.enter().append('svg:g')
       .classed('trace-label-container', true);
