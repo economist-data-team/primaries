@@ -92,6 +92,7 @@ class USPrimaryElement extends React.Component {
       y : 0,
       colour : '#cccccc',
       strokeColour : '#aaaaaa',
+      strokeWidth : 0.75,
       state : undefined,
       duration: 300
     };
@@ -109,13 +110,29 @@ class USPrimaryElement extends React.Component {
       y : -this.props.dim / 2,
       fill : this.props.colour,
       stroke : this.props.strokeColour,
-      strokeWidth : 0.75
+      strokeWidth : this.props.strokeWidth
     };
     var circProps = {
       r : this.props.dim/2 + 1, // we add 1 just to make things look nicer
       fill : this.props.colour,
       stroke : this.props.strokeColour,
-      strokeWidth : 0.75
+      strokeWidth : this.props.strokeWidth
+    };
+    var starProps = {
+      fill : this.props.colour,
+      stroke: this.props.strokeColour,
+      strokeWidth : this.props.strokeWidth,
+      d : `M 0.000 6.000
+           L 9.405 12.944
+           L 5.706 1.854
+           L 15.217 -4.944
+           L 3.527 -4.854
+           L 0.000 -16.000
+           L -3.527 -4.854
+           L -15.217 -4.944
+           L -5.706 1.854
+           L -9.405 12.944
+           L 0.000 6.000`
     };
     var fontSize = 14;
     var textProps = {
@@ -125,9 +142,23 @@ class USPrimaryElement extends React.Component {
       textAnchor : 'middle'
     };
 
-    var geomElement = this.props.type === 'primary' ?
-      (<rect {...rectProps} />) :
-      (<circle {...circProps} />);
+    var geomElement;
+    switch(this.props.type) {
+      case 'primary':
+        geomElement = (<rect {...rectProps} />);
+        break;
+      case 'caucus':
+        geomElement = (<circle {...circProps} />);
+        break;
+      default:
+        // convention, probably
+        geomElement = (<path {...starProps} />);
+    }
+    // this.props.type === 'primary' ?
+    //   (<rect {...rectProps} />) :
+    //   ('caucus' ?
+    //     (<circle {...circProps} />) :
+    //     (<path {...starProps} />));
 
     return (<g transform={translate}>
       {geomElement}
