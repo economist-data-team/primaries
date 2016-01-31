@@ -2,7 +2,7 @@ import _ from 'lodash';
 import d3 from 'd3';
 import React from 'react';
 import RFD from 'react-faux-dom';
-import { Im, mapToObject, generateTranslateString,
+import { Im, mapToObject, mapValues, generateTranslateString,
   generateRectPolygonString, addDOMProperty } from './utilities.js';
 import colours from './econ_colours.js';
 
@@ -68,6 +68,7 @@ const PRIMARIES = {
 var months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
+var eventKeys = ['onMouseEnter', 'onMouseLeave', 'onTouchStart'];
 class USPrimaryElement extends React.Component {
   constructor(props, ...args) {
     super(props, ...args);
@@ -102,6 +103,11 @@ class USPrimaryElement extends React.Component {
   }
   render() {
     var translate = generateTranslateString(...this.position);
+
+    var primaryEvents = mapValues(this.props.primaryEvents, fn => {
+      var props = this.props;
+      return function() { fn(props); }
+    });
 
     var rectProps = {
       width : this.props.dim,
@@ -154,13 +160,12 @@ class USPrimaryElement extends React.Component {
         // convention, probably
         geomElement = (<path {...starProps} />);
     }
-    // this.props.type === 'primary' ?
-    //   (<rect {...rectProps} />) :
-    //   ('caucus' ?
-    //     (<circle {...circProps} />) :
-    //     (<path {...starProps} />));
 
-    return (<g transform={translate}>
+    var groupProps = Im.extend({
+      transform : translate
+    }, primaryEvents);
+
+    return (<g {...groupProps}>
       {geomElement}
       <text {...textProps}>{this.props.state}</text>
     </g>);
@@ -420,6 +425,7 @@ export default class USPrimaries extends BoundedSVG {
       let elements = states.map((d,i) => {
         var dateIndex = primaryDateComparisons.indexOf(d.date.getTime());
         var props = Im.extend(d, {
+          primaryEvents : this.props.primaryEvents,
           key : d.state,
           duration : this.props.duration,
           dim : this.props.rectSize,

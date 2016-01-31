@@ -17,7 +17,9 @@ import chroma from 'chroma-js';
 import { createStore, compose } from 'redux';
 import { connect, Provider } from 'react-redux';
 
-import { updateData, updateParty } from './actions.js';
+import {
+  updateData, updateParty, focusPrimary, clearFocusPrimary
+} from './actions.js';
 import updateState from './reducers.js'
 
 // var store = createStore(updateState);
@@ -45,7 +47,10 @@ class Chart extends ChartContainer {
       action : v => store.dispatch(updateParty(v))
     };
     var primaryProps = {
-
+      primaryEvents : {
+        onMouseEnter : d => store.dispatch(focusPrimary(d)),
+        onMouseLeave : d => store.dispatch(clearFocusPrimary())
+      }
     };
 
     return(
