@@ -48,19 +48,23 @@ class Chart extends ChartContainer {
       action : v => store.dispatch(updateParty(v))
     };
     var primaryProps = {
+      // showPrimaryGraph : false,
       primaryEvents : {
         onMouseEnter : d => store.dispatch(focusPrimary(d)),
         onMouseLeave : d => store.dispatch(clearFocusPrimary())
       }
     };
+    var primariesHeight = primaryProps.showPrimaryGraph ? 400 : 550;
+    primaryProps.height = primariesHeight;
 
     return(
       <div className='chart-container'>
         <Header title="To come" subtitle="Also to come"/>
-          <div className="party-toggle-container">
-            <ToggleBar {...toggleProps} />
-          </div>
-        <svg width="595" height="550">
+        <div className="party-toggle-container">
+          <ToggleBar {...toggleProps} />
+        </div>
+        <div className="intro-text">This is some intro text. It'll probably be kind of long. There's room for a fair bit of it.</div>
+        <svg width="595" height={primariesHeight}>
           <USPrimaries {...primaryProps} />
         </svg>
       </div>

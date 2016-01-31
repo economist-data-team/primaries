@@ -19,3 +19,9 @@
   max-width: 240px;
   margin : 0 auto;
 }
+
+.intro-text {
+  max-width: 595px;
+  margin: 5px 10px;
+  font-family: var(--serif-stack);
+}

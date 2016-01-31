@@ -11,6 +11,7 @@
 
 :root {
   --font-stack: Officina, Calibri, Arial, sans-serif, Lucida Grande, Arial Unicode MS;
+  --serif-stack: Ecotype, Georgia, serif, Lucida Grande, Arial Unicode MS;
 }
 
 .chart-container {

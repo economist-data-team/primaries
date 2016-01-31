@@ -22,6 +22,18 @@ function guarantee(parent, classSelector, type) {
 export const DEMOCRAT = 'DEM';
 export const REPUBLICAN = 'GOP';
 
+const STAR_PATH = `M 0.000 6.000
+                   L 9.405 12.944
+                   L 5.706 1.854
+                   L 15.217 -4.944
+                   L 3.527 -4.854
+                   L 0.000 -16.000
+                   L -3.527 -4.854
+                   L -15.217 -4.944
+                   L -5.706 1.854
+                   L -9.405 12.944
+                   L 0.000 6.000`;
+
 // const is not a real thing here but w/e
 export const CANDIDATES = [
   { party : DEMOCRAT, key : 'clinton', displaySurname : 'Clinton', name : 'Hillary Clinton' },
@@ -149,17 +161,7 @@ class USPrimaryElement extends React.Component {
       fill : this.props.colour,
       stroke: this.props.strokeColour,
       strokeWidth : this.props.strokeWidth,
-      d : `M 0.000 6.000
-           L 9.405 12.944
-           L 5.706 1.854
-           L 15.217 -4.944
-           L 3.527 -4.854
-           L 0.000 -16.000
-           L -3.527 -4.854
-           L -15.217 -4.944
-           L -5.706 1.854
-           L -9.405 12.944
-           L 0.000 6.000`
+      d : STAR_PATH
     };
     var fontSize = 14;
     var textProps = {
@@ -398,9 +400,62 @@ class PrimaryGraph extends BoundedSVG {
   }
 }
 
+class PrimariesKey extends React.Component {
+  static get defaultProps() {
+    return {
+      dim : 10,
+      x : 0,
+      y : 0,
+      colour : '#cccccc',
+      strokeColour : '#aaaaaa',
+      strokeWidth : 0.75
+    };
+  }
+  render() {
+    var groupProps =  {
+      className : 'primaries-legend',
+      transform : generateTranslateString(250, this.props.fullHeight - 20)
+    };
+    var rectProps = {
+      width : this.props.dim,
+      height : this.props.dim,
+      x : -this.props.dim / 2,
+      y : -this.props.dim / 2,
+      fill : this.props.colour,
+      stroke : this.props.strokeColour,
+      strokeWidth : this.props.strokeWidth,
+      transform : generateTranslateString(0, 0)
+    };
+    var circProps = {
+      r : this.props.dim/2 + 1, // we add 1 just to make things look nicer
+      fill : this.props.colour,
+      stroke : this.props.strokeColour,
+      strokeWidth : this.props.strokeWidth,
+      transform : generateTranslateString(100, 0)
+    };
+    var starProps = {
+      fill : this.props.colour,
+      stroke: this.props.strokeColour,
+      strokeWidth : this.props.strokeWidth,
+      d : STAR_PATH,
+      transform : generateTranslateString(200, 0)
+    };
+
+    return (<g {...groupProps}>
+      <rect {...rectProps} />
+      <text  x="18" y="5">Primary</text>
+      <circle {...circProps} />
+      <text x="118" y="5">Caucus</text>
+      <path {...starProps} />
+      <text x="218" y="5">Convention/Other</text>
+    </g>);
+  }
+}
+
 export default class USPrimaries extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
+      showPrimaryGraph : true,
       duration : 250,
       rectSize : 22,
       party : DEMOCRAT,
@@ -412,6 +467,8 @@ export default class USPrimaries extends BoundedSVG {
   render() {
     // sort out the party we want to show
     var data = this.props.data.filter(d => d.party === this.props.party);
+
+    var primaryGraphHeight = this.props.showPrimaryGraph ? 150 : 0;
 
     var candidates = CANDIDATES.filter(d => d.party === this.props.party);
 
@@ -517,7 +574,7 @@ export default class USPrimaries extends BoundedSVG {
       xScale : scale,
       yScale : d3.scale.linear().domain([0, maximumDelegates]),
       duration : this.props.duration,
-      height : 150,
+      height : primaryGraphHeight,
       candidates : candidateTallies,
       lastEnteredElection : lastEnteredElection,
       numPrimaries : numPrimaries
@@ -530,13 +587,19 @@ export default class USPrimaries extends BoundedSVG {
         [0,0]
     };
 
+    var primaryGraph = this.props.showPrimaryGraph ?
+      (<PrimaryGraph {...primaryGraphProps} />) :
+      null;
+
+    var groupTransform = `translate(0, ${primaryGraphHeight})`;
     return(<g>
-      <PrimaryGraph {...primaryGraphProps} />
-      <g transform="translate(0, 150)">
+      {primaryGraph}
+      <g transform={groupTransform}>
         <MonthGroup {...monthGroupProps} />
         {stateElements}
       </g>
       <DateLabel {...dateLabelProps} />
+      <PrimariesKey dim={this.props.rectSize} fullHeight={this.props.height} />
     </g>);
   }
 }
