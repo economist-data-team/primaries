@@ -68,7 +68,28 @@ const PRIMARIES = {
 var months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
-var eventKeys = ['onMouseEnter', 'onMouseLeave', 'onTouchStart'];
+var dateLabelFormat = d3.time.format('%b %d');
+class DateLabel extends React.Component {
+  static get defaultProps() {
+    return {
+      date : null,
+      position : [162,50]
+    };
+  }
+  get formattedDate() {
+    return this.props.date ? dateLabelFormat(this.props.date).toUpperCase() : '';
+  }
+  render() {
+    var textProps = {
+      className : 'date-label',
+      transform : generateTranslateString(...this.props.position),
+      textAnchor : 'middle'
+    };
+
+    return (<text {...textProps}>{this.formattedDate}</text>);
+  }
+}
+
 class USPrimaryElement extends React.Component {
   constructor(props, ...args) {
     super(props, ...args);
@@ -502,12 +523,20 @@ export default class USPrimaries extends BoundedSVG {
       numPrimaries : numPrimaries
     };
 
+    var dateLabelProps = {
+      date : this.props.focusPrimary ? this.props.focusPrimary.date : null,
+      position: this.props.focusPrimary ?
+        [scale(primaryDateComparisons.indexOf(this.props.focusPrimary.date.getTime())), 157] :
+        [0,0]
+    };
+
     return(<g>
       <PrimaryGraph {...primaryGraphProps} />
       <g transform="translate(0, 150)">
         <MonthGroup {...monthGroupProps} />
         {stateElements}
       </g>
+      <DateLabel {...dateLabelProps} />
     </g>);
   }
 }

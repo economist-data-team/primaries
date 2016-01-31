@@ -31,7 +31,8 @@ window.store = store;
 
 var USPrimaries = connectMap({
   data : 'data',
-  party : 'party'
+  party : 'party',
+  focusPrimary : 'focusPrimary'
 })(USPrimariesRaw);
 var ToggleBar = connectMap({
   value : 'party'

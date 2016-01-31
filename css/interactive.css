@@ -1,8 +1,11 @@
 /* project-specific CSS belongs here */
 
-.month-label {
+.month-label, .date-label {
   font-size : 13px;
   font-weight : bold;
+}
+.date-label {
+  letter-spacing: -0.4px;
 }
 
 .trace-label {
