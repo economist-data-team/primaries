@@ -30,7 +30,7 @@ const DEBUGCREATESTORE = compose(
 var store = DEBUGCREATESTORE(updateState);
 window.store = store;
 
-var stateInfoDate = d3.time.format('%d %B');
+var stateInfoDate = d3.time.format('%B %e');
 class StateInfoWindowRaw extends React.Component {
   static get defaultProps() {
     return {
@@ -96,11 +96,12 @@ class Chart extends ChartContainer {
         </div>
         <div className="intro-text">
           <p>Beginning with Iowa on February 1st, use this calendar to follow
-          the Democratic and Republican primaries and caucasus and track each
-          party’s candidate of choice for the presidency state-by-state.</p>
-          <p>We’ll update the delegate count after each election as results
-          are declared, through “Super Tuesday” on March 1st and beyond to the
-          final Democratic nomination in Washington, DC, on June 14th.</p>
+          the Democratic and Republican primaries and caucuses state-by-state,
+          and track each party’s candidate of choice for the presidency.</p>
+          <p>We’ll chart and update the delegate count after each election
+          as results are declared, through “Super Tuesday” on March 1st,
+          and beyond to the final Democratic primary in Washington, DC,
+          on June 14th.</p>
         </div>
         <svg width="595" height={primariesHeight}>
           <USPrimaries {...primaryProps} />

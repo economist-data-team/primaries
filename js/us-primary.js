@@ -80,7 +80,7 @@ const PRIMARIES = {
 var months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
-var dateLabelFormat = d3.time.format('%b %d');
+var dateLabelFormat = d3.time.format('%b %e');
 // the null date is here to handle the superdelegates, which are assigned
 // 1st January but this does not reflect a real date
 var nullDate = new Date('01/01/2016').getTime();
@@ -240,7 +240,7 @@ class MonthBar extends React.Component {
     var textProps = {
       className : 'month-label',
       x : this.state.x + this.state.width / 2,
-      y : this.topBound + 12,
+      y : 24,
       textAnchor : 'middle'
     };
 
@@ -467,7 +467,7 @@ class PrimariesKey extends React.Component {
       <circle {...circProps} />
       <text x="118" y="5">Caucus</text>
       <path {...starProps} />
-      <text x="218" y="5">Convention/Other</text>
+      <text x="218" y="5">Convention/other</text>
     </g>);
   }
 }
