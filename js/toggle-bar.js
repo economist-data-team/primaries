@@ -32,6 +32,7 @@ export default class ToggleBar extends React.Component {
     return this.props.items.map((item) => {
       item = Im.extend(item, {
         key : item.value,
+        classNames : item.classNames || [],
         action : this.props.action,
         active : item.value === this.props.value
       });

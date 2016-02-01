@@ -45,3 +45,20 @@
     cursor: pointer;
   }
 }
+
+.chart-container .tab-bar {
+  .tab {
+    &.democrat {
+      &.active-tab {
+        background-color: #005994;
+        border-color : #005994;
+      }
+    }
+    &.republican {
+      &.active-tab {
+        background-color : #ed5755;
+        border-color : #ed5755;
+      }
+    }
+  }
+}

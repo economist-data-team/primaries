@@ -8,6 +8,7 @@ import { Im, parseNumerics, connectMap }
 import colours from './econ_colours.js';
 
 import Header from './header.js';
+import Footer from './footer.js';
 import ToggleBarRaw from './toggle-bar.js';
 import ChartContainer from './chart-container.js';
 import USPrimariesRaw, { DEMOCRAT, REPUBLICAN } from './us-primary.js';
@@ -42,11 +43,14 @@ class StateInfoWindowRaw extends React.Component {
       return(<div></div>);
     }
     var state = this.props.state;
+    var date = state.state === 'SPD' ? null : (<div>
+      <dt>Date of {state.type}:</dt>
+      <dd>{stateInfoDate(state.date)}</dd>
+    </div>);
     return(<div className="state-info">
       <h4>{state.state_full_name}</h4>
       <dl>
-        <dt>Date of {state.type}:</dt>
-        <dd>{stateInfoDate(state.date)}</dd>
+        {date}
       </dl>
       <p className="state-info-text">{state.text}</p>
     </div>);
@@ -70,7 +74,7 @@ class Chart extends ChartContainer {
   render() {
     var toggleProps = {
       items : [
-        { title : 'Democrats', key : DEMOCRAT, value : DEMOCRAT },
+        { title : 'Democrats', key : DEMOCRAT, value : DEMOCRAT, classNames : ['democrat'] },
         { title : 'Republicans', key : REPUBLICAN, value : REPUBLICAN }
       ],
       action : v => store.dispatch(updateParty(v))
@@ -96,6 +100,7 @@ class Chart extends ChartContainer {
           <USPrimaries {...primaryProps} />
         </svg>
         <StateInfoWindow />
+        <Footer sources={['Real Clear Politics', 'The Green Papers', 'Ballotpedia']} />
       </div>
     );
   }

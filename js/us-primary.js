@@ -81,6 +81,9 @@ var months = [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ];
 
 var dateLabelFormat = d3.time.format('%b %d');
+// the null date is here to handle the superdelegates, which are assigned
+// 1st January but this does not reflect a real date
+var nullDate = new Date('01/01/2016').getTime();
 class DateLabel extends React.Component {
   static get defaultProps() {
     return {
@@ -92,6 +95,9 @@ class DateLabel extends React.Component {
     return this.props.date ? dateLabelFormat(this.props.date).toUpperCase() : '';
   }
   render() {
+    if(this.props.date && this.props.date.getTime() === nullDate) {
+      return (<text></text>);
+    }
     var textProps = {
       className : 'date-label',
       transform : generateTranslateString(...this.props.position),
@@ -199,6 +205,7 @@ USPrimaryElement.prototype.transitionableProps = ['x', 'y'];
 class MonthBar extends React.Component {
   static get defaultProps() {
     return {
+      specialColour : colours.grey[5],
       duration : 150,
       rectColour : colours.aquamarine[1]
     };
@@ -220,8 +227,11 @@ class MonthBar extends React.Component {
     return false;
   }
   render() {
+    // 'special' is a bye for superdelegates, which are assigned to the
+    // 1st of January
+    var special = this.props.label === 'JAN';
     var rectProps = {
-      fill : this.props.rectColour,
+      fill : special ? this.props.specialColour : this.props.rectColour,
       height : this.state.height,
       width : this.state.width,
       x : this.state.x,
@@ -234,9 +244,12 @@ class MonthBar extends React.Component {
       textAnchor : 'middle'
     };
 
+    var textEl = special ? null :
+      (<text {...textProps}>{this.props.label}</text>);
+
     return (<g>
       <rect {...rectProps}/>
-      <text {...textProps}>{this.props.label}</text>
+      {textEl}
     </g>);
   }
 }
