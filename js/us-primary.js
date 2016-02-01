@@ -299,6 +299,7 @@ class PrimaryTrace extends React.Component {
   }
 }
 var primaryGraphPadding = 5;
+
 class PrimaryGraph extends BoundedSVG {
   constructor(...args) {
     super(...args);
@@ -336,27 +337,44 @@ class PrimaryGraph extends BoundedSVG {
       this.bottomBound, this.topBound
     ]);
 
-    var pathFn = d3.svg.line()
+    var primaryPathFn = d3.svg.line()
       .x((d,idx) => xScale(idx))
       .y((d,idx) => yScale(d))
       .interpolate('step');
 
-    var traceJoin = sel.selectAll('.trace')
-      .data(this.props.candidates);
+    if(lastEnteredElection === 1) {
+      // only one election—special case, no line
+      var dotJoin = sel.selectAll('.trace-dot')
+        .data(this.props.candidates);
 
-    traceJoin.enter().append('svg:path')
-      .classed('trace', true);
+      dotJoin.enter().append('svg:circle')
+        .classed('trace-dot', true);
+      dotJoin.exit().remove();
+      dotJoin.attr({
+        fill : d => d.colour,
+        cx : xScale(0),
+        cy : d => yScale(+d.delegates[0]),
+        r : 3,
+        'data-name' : d => d.displaySurname
+      });
+      sel.selectAll('.trace').remove();
+    } else {
+      var traceJoin = sel.selectAll('.trace')
+        .data(this.props.candidates);
 
-    traceJoin.exit().remove();
-
-    traceJoin.attr({
-      fill : 'none',
-      stroke : d => d.colour,
-      strokeWidth: 2,
-      d : d => pathFn(
-        d.delegates.slice(0, this.props.lastEnteredElection + 1)
-      )
-    });
+      traceJoin.enter().append('svg:path')
+        .classed('trace', true);
+      traceJoin.exit().remove();
+      traceJoin.attr({
+        fill : 'none',
+        stroke : d => d.colour,
+        strokeWidth: 2,
+        d : d => primaryPathFn(
+          d.delegates.slice(0, this.props.lastEnteredElection + 1)
+        )
+      });
+      sel.selectAll('.trace-dot').remove();
+    }
 
     var padding = primaryGraphPadding;
 
@@ -367,13 +385,19 @@ class PrimaryGraph extends BoundedSVG {
     var labeledCandidates = this.props.candidates.filter(
       c => c.delegates[numPrimaries - 1] >= countTarget
     );
+    if(labeledCandidates.length > 7) {
+      labeledCandidates = labeledCandidates.filter(
+        c => c.delegates[numPrimaries - 1] >= countTarget + 1
+      );
+    }
 
+    var labelX = xScale(lastEnteredElection === 1 ? 0.25 : lastEnteredElection) + 5;
     var nodes = labeledCandidates.map((d, idx) => ({
       anchor : true,
       candidate : d,
-      startX : xScale(lastEnteredElection) + 5,
+      startX : labelX,
       startY : yScale(d.delegates[numPrimaries - 1]),
-      x : xScale(lastEnteredElection) + 5,
+      x : labelX,
       // the idx just gives them a little nudge
       y : yScale(d.delegates[numPrimaries - 1]) + idx
     }));
