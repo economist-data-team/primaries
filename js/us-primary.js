@@ -374,7 +374,7 @@ class PrimaryGraph extends BoundedSVG {
       startX : xScale(lastEnteredElection) + 5,
       startY : yScale(d.delegates[numPrimaries - 1]),
       x : xScale(lastEnteredElection) + 5,
-      // the idx just gives them a little nudge in the right direction...
+      // the idx just gives them a little nudge
       y : yScale(d.delegates[numPrimaries - 1]) + idx
     }));
     var candidateCount = nodes.length;
@@ -389,9 +389,9 @@ class PrimaryGraph extends BoundedSVG {
       .linkDistance(0)
       .linkStrength(1)
       .gravity(0)
-      .chargeDistance(30)
-      .charge(d => d.anchor ? 0 : -60)
-      .friction(0.9);
+      .chargeDistance(40)
+      .charge(d => d.anchor ? 0 : -90)
+      .friction(0.8);
 
     force.nodes(nodes).links(links).start();
     force.on('tick', d => {
