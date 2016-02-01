@@ -35,12 +35,14 @@
   max-width: 40%;
   position: absolute;
   right: 15px;
-  bottom: 45px;
+  bottom: 75px;
   border: 1px solid var(--grey-5);
   padding: 3px 5px;
 }
 .state-info-text {
   font-family: var(--serif-stack);
+  font-size: 15px; line-height: 1.3;
+  margin-top: 0.5em;
 }
 
 .primary-calendar {

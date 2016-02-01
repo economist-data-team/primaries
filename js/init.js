@@ -44,15 +44,13 @@ class StateInfoWindowRaw extends React.Component {
     }
     var state = this.props.state;
     var date = state.state === 'SPD' ? null : (<div>
-      <dt>Date of {state.type}:</dt>
-      <dd>{stateInfoDate(state.date)}</dd>
+      <span>Date of {state.type}:</span> <span>{stateInfoDate(state.date)}</span>
     </div>);
+    var textBlock = state.text ? (<p className="state-info-text">{state.text}</p>) : null;
     return(<div className="state-info">
       <h4>{state.state_full_name}</h4>
-      <dl>
-        {date}
-      </dl>
-      <p className="state-info-text">{state.text}</p>
+      {date}
+      {textBlock}
     </div>);
   }
 }
@@ -86,7 +84,7 @@ class Chart extends ChartContainer {
         onMouseLeave : d => store.dispatch(clearFocusPrimary())
       }
     };
-    var primariesHeight = primaryProps.showPrimaryGraph ? 400 : 550;
+    var primariesHeight = primaryProps.showPrimaryGraph ? 550 : 400;
     primaryProps.height = primariesHeight;
 
     return(

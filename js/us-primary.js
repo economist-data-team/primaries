@@ -240,7 +240,7 @@ class MonthBar extends React.Component {
     var textProps = {
       className : 'month-label',
       x : this.state.x + this.state.width / 2,
-      y : 22,
+      y : this.topBound + 12,
       textAnchor : 'middle'
     };
 
@@ -360,10 +360,20 @@ class PrimaryGraph extends BoundedSVG {
 
     var padding = primaryGraphPadding;
 
-    // we'll only show the first six, because let's not go mad
-    var labeledCandidates = this.props.candidates.slice(0,6);
+    // we'll aim to show the first six, because let's not go mad
+    var cutoffCandidate = this.props.candidates.slice(0,6).pop();
+    var countTarget = cutoffCandidate.delegates[numPrimaries - 1];
+    // var labeledCandidates = this.props.candidates.slice(0,6);
+    var labeledCandidates = this.props.candidates.filter(
+      c => c.delegates[numPrimaries - 1] >= countTarget
+    ).map(d => Im.extend(d, {
+      x : xScale(lastEnteredElection) + 5,
+      y : yScale(d.delegates[numPrimaries - 1])
+    }));
 
-    var theForce = d3.layout.force();
+    labeledCandidates.forEach((d, idx) => {
+      var startY = d.y;
+    });
 
     var labelJoin = sel.selectAll('.trace-label-container')
       .data(labeledCandidates);
@@ -372,10 +382,7 @@ class PrimaryGraph extends BoundedSVG {
       .classed('trace-label-container', true);
     labelJoin.exit().remove();
     labelJoin
-      .attr('transform', d => generateTranslateString(
-        xScale(lastEnteredElection) + 5,
-        yScale(d.delegates[numPrimaries - 1])
-      ))
+      .attr('transform', d => generateTranslateString(d.x, d.y))
       .each(function(d) {
         var label = `${d.displaySurname} ${d.delegates[lastEnteredElection]}`;
         var rect = guarantee(this, 'trace-bg', 'svg:rect')
@@ -532,6 +539,7 @@ export default class USPrimaries extends BoundedSVG {
     }
 
     var monthGroupProps = {
+      margin : [12, 10, 10],
       scale : scale,
       duration : this.props.duration,
       monthSections : primaryMonthSections,
@@ -596,8 +604,10 @@ export default class USPrimaries extends BoundedSVG {
     var dateLabelProps = {
       date : this.props.focusPrimary ? this.props.focusPrimary.date : null,
       position: this.props.focusPrimary ?
-        [scale(primaryDateComparisons.indexOf(this.props.focusPrimary.date.getTime())), 157] :
-        [0,0]
+        [
+          scale(primaryDateComparisons.indexOf(this.props.focusPrimary.date.getTime())),
+          this.props.showPrimaryGraph ? 160 : 10
+        ] : [0,0]
     };
 
     var primaryGraph = this.props.showPrimaryGraph ?
