@@ -50,6 +50,7 @@ class StateInfoWindowRaw extends React.Component {
     return(<div className="state-info">
       <h4>{state.state_full_name}</h4>
       {date}
+      <div>Delegates determined by election: {state.pledged}</div>
       {textBlock}
     </div>);
   }
