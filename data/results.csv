@@ -1,6 +1,6 @@
 date,state_full_name,state,type,party,pledged,unpledged,total_delegates,partyline,allocation,simplified_allocation,text,bush_del,bush_pct,carson_del,carson_pct,christie_del,christie_pct,cruz_del,cruz_pct,fiorina_del,fiorina_pct,gilmore_del,gilmore_pct,huckabee_del,huckabee_pct,kasich_del,kasich_pct,paul_del,paul_pct,rubio_del,rubio_pct,santorum_del,santorum_pct,trump_del,trump_pct,clinton_del,clinton_pct,omalley_del,omalley_pct,sanders_del,sanders_pct
 01/01/2016,Superdelegates,SPD,convention,DEM,0,712,712,N/A,N/A,N/A,,,,,,,,,,,,,,,,,,,,,,,,,,359,,2,,8,
-01/03/2016,Alabama,AL,primary,DEM,53,7,60,open,proportional,proportional,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+01/03/2016,Alabama,AL,primary,DEM,53,7,60,open,proportional,proportional,"51% of the voters in the 2008 Democratic primary here were black. Only 16% said they were ""very liberal"".",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 26/03/2016,Alaska,AK,caucus,DEM,16,4,20,closed,proportional,proportional,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 01/03/2016,American Samoa,AS,caucus,DEM,6,4,10,open,proportional,proportional,"American Samoa and other American territories vote in the party primaries, but not in the presidential election.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 22/03/2016,Arizona,AZ,primary,DEM,75,10,85,closed,proportional,proportional,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
@@ -57,7 +57,7 @@ date,state_full_name,state,type,party,pledged,unpledged,total_delegates,partylin
 10/05/2016,West Virginia,WV,primary,DEM,29,8,37,modified,proportional,proportional,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 05/04/2016,Wisconsin,WI,primary,DEM,86,10,96,open,proportional,proportional,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 09/04/2016,Wyoming,WY,caucus,DEM,14,4,18,closed,proportional,proportional,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-01/03/2016,Alabama,AL,primary,GOP,47,3,50,open,most-district,partial,Republilcans here are very conservative; in 2012 80% were evangelical Christians and 32% thought abortion should be always illegal.  ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+01/03/2016,Alabama,AL,primary,GOP,47,3,50,open,most-district,partial,Republicans here are very conservative; in 2012 80% were evangelical Christians and 32% thought abortion should be always illegal.  ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 01/03/2016,Alaska,AK,caucus,GOP,25,3,28,closed,proportional,proportional,"Sarah Palin, a former governor, has endorsed Donald Trump. Mitt Romney eked out a narrow win at the caucuses here in 2012. ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 22/03/2016,American Samoa,AS,convention,GOP,0,9,9,open,convention,convention,"American Samoa and other American territories have a say in the party primaries, but not in the presidential election.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 22/03/2016,Arizona,AZ,primary,GOP,58,0,58,closed,all,all,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
