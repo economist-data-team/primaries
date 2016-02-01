@@ -27,9 +27,21 @@
 }
 
 .state-info {
+  max-width: 40%;
   position: absolute;
   right: 15px;
-  bottom: 40px;
+  bottom: 45px;
   border: 1px solid var(--grey-5);
   padding: 3px 5px;
+}
+.state-info-text {
+  font-family: var(--serif-stack);
+}
+
+.primary-calendar {
+  user-select: none;
+
+  rect, text {
+    cursor: pointer;
+  }
 }

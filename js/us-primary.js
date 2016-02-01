@@ -594,7 +594,7 @@ export default class USPrimaries extends BoundedSVG {
     var groupTransform = `translate(0, ${primaryGraphHeight})`;
     return(<g>
       {primaryGraph}
-      <g transform={groupTransform}>
+      <g transform={groupTransform} className="primary-calendar">
         <MonthGroup {...monthGroupProps} />
         {stateElements}
       </g>

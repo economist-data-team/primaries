@@ -29,6 +29,7 @@ const DEBUGCREATESTORE = compose(
 var store = DEBUGCREATESTORE(updateState);
 window.store = store;
 
+var stateInfoDate = d3.time.format('%d %B');
 class StateInfoWindowRaw extends React.Component {
   static get defaultProps() {
     return {
@@ -40,8 +41,14 @@ class StateInfoWindowRaw extends React.Component {
       // nothing to see here...
       return(<div></div>);
     }
+    var state = this.props.state;
     return(<div className="state-info">
-      Hello
+      <h4>{state.state_full_name}</h4>
+      <dl>
+        <dt>Date of {state.type}:</dt>
+        <dd>{stateInfoDate(state.date)}</dd>
+      </dl>
+      <p className="state-info-text">{state.text}</p>
     </div>);
   }
 }
@@ -106,8 +113,19 @@ var chart = React.render(
 
 d3.csv('./data/results.csv', (data) => {
   data = data.map((d) => {
+    var text = d.text ? d.text :
+      // this is not especially efficient, but it works so we'll
+      // stick with it...
+      //
+      // we find both primaries for this state
+      data.filter(d2 => d2.state === d.state)
+        // strip down to just the texts
+        .map(s => s.text)
+        // and grab the first populated text field we find
+        .reduce((memo, s) => memo ? memo : s, "");
     return Im.extend(d, {
-      date : dateParser.parse(d.date)
+      date : dateParser.parse(d.date),
+      text : text
     });
   });
   data = data.map(parseNumerics);
