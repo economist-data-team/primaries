@@ -80,7 +80,7 @@ class Chart extends ChartContainer {
       action : v => store.dispatch(updateParty(v))
     };
     var primaryProps = {
-      // showPrimaryGraph : false,
+      showPrimaryGraph : false,
       primaryEvents : {
         onMouseEnter : d => store.dispatch(focusPrimary(d)),
         onMouseLeave : d => store.dispatch(clearFocusPrimary())
@@ -95,7 +95,14 @@ class Chart extends ChartContainer {
         <div className="party-toggle-container">
           <ToggleBar {...toggleProps} />
         </div>
-        <div className="intro-text">This is some intro text. It'll probably be kind of long. There's room for a fair bit of it.</div>
+        <div className="intro-text">
+          <p>Beginning with Iowa on February 1st, use this calendar to follow
+          the Democratic and Republican primaries and caucasus and track each
+          party’s candidate of choice for the presidency state-by-state.</p>
+          <p>We’ll update the delegate count after each election as results
+          are declared, through “Super Tuesday” on March 1st and beyond to the
+          final Democratic nomination in Washington, DC, on June 14th.</p>
+        </div>
         <svg width="595" height={primariesHeight}>
           <USPrimaries {...primaryProps} />
         </svg>
