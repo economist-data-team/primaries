@@ -3,7 +3,7 @@ import d3 from 'd3';
 import React from 'react';
 import RFD from 'react-faux-dom';
 import { Im, mapToObject, mapValues, generateTranslateString,
-  generateRectPolygonString, addDOMProperty } from './utilities.js';
+  generateRectPolygonString, addDOMProperty, bindValueToRange } from './utilities.js';
 import colours from './econ_colours.js';
 
 import BoundedSVG from './bounded-svg.js';
@@ -366,17 +366,45 @@ class PrimaryGraph extends BoundedSVG {
     // var labeledCandidates = this.props.candidates.slice(0,6);
     var labeledCandidates = this.props.candidates.filter(
       c => c.delegates[numPrimaries - 1] >= countTarget
-    ).map(d => Im.extend(d, {
-      x : xScale(lastEnteredElection) + 5,
-      y : yScale(d.delegates[numPrimaries - 1])
-    }));
+    );
 
-    labeledCandidates.forEach((d, idx) => {
-      var startY = d.y;
+    var nodes = labeledCandidates.map((d, idx) => ({
+      anchor : true,
+      candidate : d,
+      startX : xScale(lastEnteredElection) + 5,
+      startY : yScale(d.delegates[numPrimaries - 1]),
+      x : xScale(lastEnteredElection) + 5,
+      // the idx just gives them a little nudge in the right direction...
+      y : yScale(d.delegates[numPrimaries - 1]) + idx
+    }));
+    var candidateCount = nodes.length;
+    var links = nodes.map((d, idx) => ({
+      source : idx,
+      target : idx + candidateCount,
+      value : 1
+    }));
+    nodes = nodes.concat(nodes.map(d => Im.extend(d, { anchor : false })));
+
+    var force = d3.layout.force()
+      .linkDistance(0)
+      .linkStrength(1)
+      .gravity(0)
+      .chargeDistance(30)
+      .charge(d => d.anchor ? 0 : -60)
+      .friction(0.9);
+
+    force.nodes(nodes).links(links).start();
+    force.on('tick', d => {
+      nodes.forEach(n => {
+        n.x = n.startX,
+        n.y = n.anchor ? n.startY : bindValueToRange(n.y, 10, 140)
+      });
     });
+    for(let i=0;i<2000;++i) { force.tick(); }
+    force.stop();
 
     var labelJoin = sel.selectAll('.trace-label-container')
-      .data(labeledCandidates);
+      .data(nodes.filter(d => !d.anchor));
 
     labelJoin.enter().append('svg:g')
       .classed('trace-label-container', true);
@@ -384,10 +412,10 @@ class PrimaryGraph extends BoundedSVG {
     labelJoin
       .attr('transform', d => generateTranslateString(d.x, d.y))
       .each(function(d) {
-        var label = `${d.displaySurname} ${d.delegates[lastEnteredElection]}`;
+        var label = `${d.candidate.displaySurname} ${d.candidate.delegates[lastEnteredElection]}`;
         var rect = guarantee(this, 'trace-bg', 'svg:rect')
           .attr({
-            fill : d.colour,
+            fill : d.candidate.colour,
             width : ctx.measureText(label.toUpperCase()).width + padding * 2,
             height : 18,
             y : -9
