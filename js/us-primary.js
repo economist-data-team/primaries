@@ -361,7 +361,8 @@ class PrimaryGraph extends BoundedSVG {
     var padding = primaryGraphPadding;
 
     // we'll aim to show the first six, because let's not go mad
-    var countTarget = this.props.candidates[5].delegates[numPrimaries - 1];
+    var cutoffCandidate = this.props.candidates.slice(0,6).pop();
+    var countTarget = cutoffCandidate.delegates[numPrimaries - 1];
     // var labeledCandidates = this.props.candidates.slice(0,6);
     var labeledCandidates = this.props.candidates.filter(
       c => c.delegates[numPrimaries - 1] >= countTarget
