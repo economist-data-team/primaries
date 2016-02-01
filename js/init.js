@@ -90,7 +90,7 @@ class Chart extends ChartContainer {
 
     return(
       <div className='chart-container'>
-        <Header title="To come" subtitle="Also to come"/>
+        <Header title="2016 US primary-elections calendar"/>
         <div className="party-toggle-container">
           <ToggleBar {...toggleProps} />
         </div>
