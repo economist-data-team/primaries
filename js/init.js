@@ -29,6 +29,24 @@ const DEBUGCREATESTORE = compose(
 var store = DEBUGCREATESTORE(updateState);
 window.store = store;
 
+class StateInfoWindowRaw extends React.Component {
+  static get defaultProps() {
+    return {
+      state : null
+    };
+  }
+  render() {
+    if(!this.props.state) {
+      // nothing to see here...
+      return(<div></div>);
+    }
+    return(<div className="state-info">
+      Hello
+    </div>);
+  }
+}
+
+
 var USPrimaries = connectMap({
   data : 'data',
   party : 'party',
@@ -37,6 +55,9 @@ var USPrimaries = connectMap({
 var ToggleBar = connectMap({
   value : 'party'
 })(ToggleBarRaw);
+var StateInfoWindow = connectMap({
+  state : 'focusPrimary'
+})(StateInfoWindowRaw);
 
 class Chart extends ChartContainer {
   render() {
@@ -67,6 +88,7 @@ class Chart extends ChartContainer {
         <svg width="595" height={primariesHeight}>
           <USPrimaries {...primaryProps} />
         </svg>
+        <StateInfoWindow />
       </div>
     );
   }

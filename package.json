@@ -27,7 +27,7 @@
     "chroma-js": "^1.1.1",
     "d3": "^3.5.6",
     "d3-geo-projection": "^0.2.15",
-    "lodash": "^4.0.1",
+    "lodash": "^3.2.0",
     "react": "^0.13.3",
     "react-faux-dom": "^2.0.1",
     "react-redux": "^3.0.1",

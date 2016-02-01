@@ -25,3 +25,11 @@
   margin: 5px 10px;
   font-family: var(--serif-stack);
 }
+
+.state-info {
+  position: absolute;
+  right: 15px;
+  bottom: 40px;
+  border: 1px solid var(--grey-5);
+  padding: 3px 5px;
+}

@@ -414,7 +414,7 @@ class PrimariesKey extends React.Component {
   render() {
     var groupProps =  {
       className : 'primaries-legend',
-      transform : generateTranslateString(250, this.props.fullHeight - 20)
+      transform : generateTranslateString(245, this.props.fullHeight - 20)
     };
     var rectProps = {
       width : this.props.dim,
