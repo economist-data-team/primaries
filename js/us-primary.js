@@ -400,7 +400,7 @@ class PrimaryGraph extends BoundedSVG {
         n.y = n.anchor ? n.startY : bindValueToRange(n.y, 10, 140)
       });
     });
-    for(let i=0;i<2000;++i) { force.tick(); }
+    for(let i=0;i<500;++i) { force.tick(); }
     force.stop();
 
     var labelJoin = sel.selectAll('.trace-label-container')
