@@ -360,8 +360,12 @@ class PrimaryGraph extends BoundedSVG {
 
     var padding = primaryGraphPadding;
 
-    // we'll only show the first six, because let's not go mad
-    var labeledCandidates = this.props.candidates.slice(0,6);
+    // we'll aim to show the first six, because let's not go mad
+    var countTarget = this.props.candidates[5].delegates[numPrimaries - 1];
+    // var labeledCandidates = this.props.candidates.slice(0,6);
+    var labeledCandidates = this.props.candidates.filter(
+      c => c.delegates[numPrimaries - 1] >= countTarget
+    );
 
     var theForce = d3.layout.force();
 
