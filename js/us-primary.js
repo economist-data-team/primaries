@@ -2,6 +2,7 @@ import _ from 'lodash';
 import d3 from 'd3';
 import React from 'react';
 import RFD from 'react-faux-dom';
+import chroma from 'chroma-js';
 import { Im, mapToObject, mapValues, generateTranslateString,
   generateRectPolygonString, addDOMProperty, bindValueToRange } from './utilities.js';
 import colours from './econ_colours.js';
@@ -18,6 +19,9 @@ function guarantee(parent, classSelector, type) {
   return out[0][0] ? out : sel.append(type)
     .classed(classSelector, true);
 }
+
+// for when to switch to white text based on darkness of background
+const LUMINANCE_THRESHOLD = 0.35;
 
 export const DEMOCRAT = 'DEM';
 export const REPUBLICAN = 'GOP';
@@ -143,6 +147,8 @@ class USPrimaryElement extends React.Component {
   render() {
     var translate = generateTranslateString(...this.position);
 
+    var fillLuminance = chroma(this.props.colour).luminance();
+
     var primaryEvents = mapValues(this.props.primaryEvents, fn => {
       var props = this.props;
       return function() { fn(props); }
@@ -171,6 +177,7 @@ class USPrimaryElement extends React.Component {
     };
     var fontSize = 14;
     var textProps = {
+      fill : fillLuminance > LUMINANCE_THRESHOLD ? 'black' : 'white',
       fontSize : fontSize,
       fontWeight : 'bold',
       y : fontSize / 2.75,
@@ -285,21 +292,7 @@ class MonthGroup extends BoundedSVG {
   }
 }
 
-class PrimaryTrace extends React.Component {
-  render() {
-    var el = RFD.createElement('g');
-    var sel = d3.select(el);
-
-    var pathFn = d3.svg.line()
-      .x((d,idx) => this.props.xScale(idx))
-      .y((d,idx) => this.props.yScale(d.delegates[idx]))
-      .interpolate('step-after');
-
-    return el.toReact();
-  }
-}
 var primaryGraphPadding = 5;
-
 class PrimaryGraph extends BoundedSVG {
   constructor(...args) {
     super(...args);
@@ -341,7 +334,6 @@ class PrimaryGraph extends BoundedSVG {
       .x((d,idx) => xScale(idx))
       .y((d,idx) => yScale(d))
       .interpolate('step');
-
 
     if(lastEnteredElection === 0) {
       // only one election—special case, no line
@@ -438,6 +430,7 @@ class PrimaryGraph extends BoundedSVG {
       .attr('transform', d => generateTranslateString(d.x, d.y))
       .each(function(d) {
         var label = `${d.candidate.displaySurname} ${d.candidate.delegates[lastEnteredElection]}`;
+        var fillLuminance = chroma(d.candidate.colour).luminance();
         var rect = guarantee(this, 'trace-bg', 'svg:rect')
           .attr({
             fill : d.candidate.colour,
@@ -448,6 +441,7 @@ class PrimaryGraph extends BoundedSVG {
         var text = guarantee(this, 'trace-label', 'svg:text')
           .text(label)
           .attr({
+            fill : fillLuminance > LUMINANCE_THRESHOLD ? 'black' : 'white',
             y : 4,
             x : padding
           });
@@ -569,14 +563,43 @@ export default class USPrimaries extends BoundedSVG {
       .key(d => d.date);
     var grouped = dateNester.map(data);
 
+    // now let's work out their delegate tallies
+    var numPrimaries = primaryDates.length;
+    var candidateTallies = candidates.map(d => {
+      var dateTallies = primaryDates.map(date => {
+        var individualPrimaries = grouped[date];
+        // the || is just to make sure we don't end up with strings
+        return individualPrimaries.reduce(
+          (memo, p) => memo + (p[`${d.key}_del`] || 0), 0
+        )
+      });
+      return Im.extend(d, {
+        delegates : dateTallies.map(
+          (dT,idx) => dateTallies.slice(0, idx+1).reduce(
+            (memo,n) => memo + n, 0
+          )
+        )
+      });
+    }).sort(
+      (a,b) => b.delegates[numPrimaries - 1] - a.delegates[numPrimaries - 1]
+    ).map((d,idx) => Im.extend(d, { colour : primary.colours[idx] }));
+
     var stateElements = [];
     for(let date in grouped) {
       let states = grouped[date];
 
       let elements = states.map((d,i) => {
         var dateIndex = primaryDateComparisons.indexOf(d.date.getTime());
+        var winner = candidateTallies.reduce((memo, c) => {
+          var pct_key = `${c.key}_pct`;
+          var pct = d[pct_key];
+          if(!pct) { return memo; }
+          return memo.pct > pct ? memo : { candidate : c, pct : pct };
+        }, { candidate : null, pct : 0 }).candidate;
         var props = Im.extend(d, {
           primaryEvents : this.props.primaryEvents,
+          winner : winner,
+          colour : winner ? winner.colour : undefined,
           key : d.state,
           duration : this.props.duration,
           dim : this.props.rectSize,
@@ -598,27 +621,6 @@ export default class USPrimaries extends BoundedSVG {
       monthSections : primaryMonthSections,
       height: 30
     };
-
-    // now let's work out their delegate tallies
-    var numPrimaries = primaryDates.length;
-    var candidateTallies = candidates.map(d => {
-      var dateTallies = primaryDates.map(date => {
-        var individualPrimaries = grouped[date];
-        // the || is just to make sure we don't end up with strings
-        return individualPrimaries.reduce(
-          (memo, p) => memo + (p[`${d.key}_del`] || 0), 0
-        )
-      });
-      return Im.extend(d, {
-        delegates : dateTallies.map(
-          (dT,idx) => dateTallies.slice(0, idx+1).reduce(
-            (memo,n) => memo + n, 0
-          )
-        )
-      });
-    }).sort(
-      (a,b) => b.delegates[numPrimaries - 1] - a.delegates[numPrimaries - 1]
-    ).map((d,idx) => Im.extend(d, { colour : primary.colours[idx] }));
 
     // we also need to know how far to go...
     var maximumDelegates = 0;

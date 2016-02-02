@@ -43,14 +43,14 @@ class StateInfoWindowRaw extends React.Component {
       return(<div></div>);
     }
     var state = this.props.state;
-    var date = state.state === 'SPD' ? null : (<div>
-      <span>Date of {state.type}:</span> <span>{stateInfoDate(state.date)}</span>
+    var block = state.state === 'SPD' ? null : (<div>
+      <div>Date of {state.type}: {stateInfoDate(state.date)}</div>
+      <div>Delegates determined by election: {state.pledged}</div>
     </div>);
     var textBlock = state.text ? (<p className="state-info-text">{state.text}</p>) : null;
     return(<div className="state-info">
       <h4>{state.state_full_name}</h4>
-      {date}
-      <div>Delegates determined by election: {state.pledged}</div>
+      {block}
       {textBlock}
     </div>);
   }
@@ -98,7 +98,7 @@ class Chart extends ChartContainer {
           <USPrimaries {...primaryProps} />
         </svg>
         <StateInfoWindow />
-        <Footer sources={['Real Clear Politics', 'The Green Papers', 'Ballotpedia']} />
+        <Footer sources={['Real Clear Politics', 'The Green Papers', 'Ballotpedia', 'Associated Press']} />
       </div>
     );
   }
