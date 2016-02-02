@@ -22,6 +22,7 @@ function guarantee(parent, classSelector, type) {
 
 // for when to switch to white text based on darkness of background
 const LUMINANCE_THRESHOLD = 0.38;
+const ENDED_COLOUR = colours.grey[6];
 
 export const DEMOCRAT = 'DEM';
 export const REPUBLICAN = 'GOP';
@@ -405,6 +406,7 @@ class PrimaryGraph extends BoundedSVG {
             y : -9
           });
         var text = guarantee(this, 'trace-label', 'svg:text')
+          .classed('ended', d.candidate.ended)
           .text(label)
           .attr({
             fill : fillLuminance > LUMINANCE_THRESHOLD ? 'black' : 'white',
@@ -596,7 +598,7 @@ export default class USPrimaries extends BoundedSVG {
       });
     }).sort(
       (a,b) => b.delegates[numPrimaries - 1] - a.delegates[numPrimaries - 1]
-    ).map((d,idx) => Im.extend(d, { colour : primary.colours[idx] }));
+    ).map((d,idx) => Im.extend(d, { colour : d.ended ? ENDED_COLOUR : primary.colours[idx] }));
 
     var stateElements = [];
     for(let date in grouped) {

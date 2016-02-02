@@ -90,7 +90,7 @@ class Chart extends ChartContainer {
 
     return(
       <div className='chart-container'>
-        <Header title="2016 US primary-elections calendar"/>
+        <Header title="2016 US primary-elections calendar" subtitle="Delegate support, to date"/>
         <div className="party-toggle-container">
           <ToggleBar {...toggleProps} />
         </div>
@@ -98,7 +98,7 @@ class Chart extends ChartContainer {
           <USPrimaries {...primaryProps} />
         </svg>
         <StateInfoWindow />
-        <Footer sources={['Real Clear Politics', 'The Green Papers', 'Ballotpedia', 'Associated Press']} />
+        <Footer sources={['RealClearPolitics', 'The Green Papers', 'Ballotpedia', 'Associated Press']} />
       </div>
     );
   }

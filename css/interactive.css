@@ -12,6 +12,10 @@
   text-transform: uppercase;
   font-size: 14px;
   font-weight: bold;
+
+  &.ended {
+    text-decoration: line-through;
+  }
 }
 .trace-label-links {
   stroke-dasharray: 1 1;
