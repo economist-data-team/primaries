@@ -416,7 +416,8 @@ class PrimaryGraph extends BoundedSVG {
     var offset = lastEnteredElection === 0 ? 10 : 5;
 
     var linkJoin = sel.selectAll('.trace-label-links')
-      .data(links);
+      // only draw the link if we actually moved the label
+      .data(links.filter(l => Math.abs(l.source.y - l.target.y) > 0));
     linkJoin.enter().append('svg:path')
       .classed('trace-label-links', true);
     linkJoin.exit().remove();
