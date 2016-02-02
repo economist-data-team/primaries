@@ -21,7 +21,7 @@ function guarantee(parent, classSelector, type) {
 }
 
 // for when to switch to white text based on darkness of background
-const LUMINANCE_THRESHOLD = 0.35;
+const LUMINANCE_THRESHOLD = 0.38;
 
 export const DEMOCRAT = 'DEM';
 export const REPUBLICAN = 'GOP';
