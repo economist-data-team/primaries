@@ -41,7 +41,7 @@ const STAR_PATH = `M 0.000 6.000
 // const is not a real thing here but w/e
 export const CANDIDATES = [
   { party : DEMOCRAT, key : 'clinton', displaySurname : 'Clinton', name : 'Hillary Clinton' },
-  { party : DEMOCRAT, key : 'omalley', displaySurname : 'O’Malley', name : 'Martin O’Malley' },
+  { party : DEMOCRAT, key : 'omalley', displaySurname : 'O’Malley', name : 'Martin O’Malley', ended : true },
   { party : DEMOCRAT, key : 'sanders', displaySurname : 'Sanders', name : 'Bernie Sanders' },
 
   { party : REPUBLICAN, key : 'bush', displaySurname : 'Bush', name : 'Jeb Bush' },
@@ -50,7 +50,7 @@ export const CANDIDATES = [
   { party : REPUBLICAN, key : 'cruz', displaySurname : 'Cruz', name : 'Ted Cruz' },
   { party : REPUBLICAN, key : 'fiorina', displaySurname : 'Fiorina', name : 'Carly Fiorina' },
   { party : REPUBLICAN, key : 'gilmore', displaySurname : 'Gilmore', name : 'Jim Gilmore' },
-  { party : REPUBLICAN, key : 'huckabee', displaySurname : 'Huckabee', name : 'Mike Huckabee' },
+  { party : REPUBLICAN, key : 'huckabee', displaySurname : 'Huckabee', name : 'Mike Huckabee', ended : true },
   { party : REPUBLICAN, key : 'kasich', displaySurname : 'Kasich', name : 'John Kasich' },
   { party : REPUBLICAN, key : 'paul', displaySurname : 'Paul', name : 'Rand Paul' },
   { party : REPUBLICAN, key : 'rubio', displaySurname : 'Rubio', name : 'Marco Rubio' },
