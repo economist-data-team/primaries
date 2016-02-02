@@ -335,40 +335,6 @@ class PrimaryGraph extends BoundedSVG {
       .y((d,idx) => yScale(d))
       .interpolate('step');
 
-    if(lastEnteredElection === 0) {
-      // only one election—special case, no line
-      var dotJoin = sel.selectAll('.trace-dot')
-        .data(this.props.candidates);
-
-      dotJoin.enter().append('svg:circle')
-        .classed('trace-dot', true);
-      dotJoin.exit().remove();
-      dotJoin.attr({
-        fill : d => d.colour,
-        cx : xScale(0),
-        cy : d => yScale(+d.delegates[0]),
-        r : 3,
-        'data-name' : d => d.displaySurname
-      });
-      sel.selectAll('.trace').remove();
-    } else {
-      var traceJoin = sel.selectAll('.trace')
-        .data(this.props.candidates);
-
-      traceJoin.enter().append('svg:path')
-        .classed('trace', true);
-      traceJoin.exit().remove();
-      traceJoin.attr({
-        fill : 'none',
-        stroke : d => d.colour,
-        strokeWidth: 2,
-        d : d => primaryPathFn(
-          d.delegates.slice(0, this.props.lastEnteredElection + 1)
-        )
-      });
-      sel.selectAll('.trace-dot').remove();
-    }
-
     var padding = primaryGraphPadding;
 
     // we'll aim to show the first six, because let's not go mad
@@ -446,6 +412,53 @@ class PrimaryGraph extends BoundedSVG {
             x : padding
           });
       });
+
+    var offset = lastEnteredElection === 0 ? 10 : 5;
+
+    var linkJoin = sel.selectAll('.trace-label-links')
+      .data(links);
+    linkJoin.enter().append('svg:path')
+      .classed('trace-label-links', true);
+    linkJoin.exit().remove();
+    linkJoin.attr({
+      fill : 'none',
+      stroke : '#333',
+      d : d => `M ${d.source.x-offset} ${d.source.y}
+                C ${d.target.x} ${d.source.y} ${d.source.x-offset} ${d.target.y} ${d.target.x} ${d.target.y}`
+    });
+    if(lastEnteredElection === 0) {
+      // only one election—special case, no line
+      var dotJoin = sel.selectAll('.trace-dot')
+        .data(this.props.candidates);
+
+      dotJoin.enter().append('svg:circle')
+        .classed('trace-dot', true);
+      dotJoin.exit().remove();
+      dotJoin.attr({
+        fill : d => d.colour,
+        cx : xScale(0),
+        cy : d => yScale(+d.delegates[0]),
+        r : 3,
+        'data-name' : d => d.displaySurname
+      });
+      sel.selectAll('.trace').remove();
+    } else {
+      var traceJoin = sel.selectAll('.trace')
+        .data(this.props.candidates);
+
+      traceJoin.enter().append('svg:path')
+        .classed('trace', true);
+      traceJoin.exit().remove();
+      traceJoin.attr({
+        fill : 'none',
+        stroke : d => d.colour,
+        strokeWidth: 2,
+        d : d => primaryPathFn(
+          d.delegates.slice(0, this.props.lastEnteredElection + 1)
+        )
+      });
+      sel.selectAll('.trace-dot').remove();
+    }
 
     return el.toReact();
 
