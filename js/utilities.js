@@ -372,3 +372,27 @@ export function commaNumber(amount) {
   var amount_string = amount_array.join(".");
   return (negative ? '-' : '') + amount_string;
 }
+
+
+
+//////////////////
+// D3 FUNCTIONS //
+//////////////////
+
+/**
+ * a function for creating or selecting a single element with d3
+ *
+ * @param {node} parent - the containing node
+ * @param {string} classSelector - the class this element should have
+ * @param {string} type - the type of element to create if it does not
+ *                        already exist
+ *
+ * @return {d3-selection} - the element, either found or appended
+ */
+export function guarantee(parent, classSelector, type) {
+  var sel = d3.select(parent)
+  var out = sel.select(`.${classSelector}`);
+  // why it's [0][0] I have no idea
+  return out[0][0] ? out : sel.append(type)
+    .classed(classSelector, true);
+}
