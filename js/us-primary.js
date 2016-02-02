@@ -342,7 +342,8 @@ class PrimaryGraph extends BoundedSVG {
       .y((d,idx) => yScale(d))
       .interpolate('step');
 
-    if(lastEnteredElection === 1) {
+
+    if(lastEnteredElection === 0) {
       // only one election—special case, no line
       var dotJoin = sel.selectAll('.trace-dot')
         .data(this.props.candidates);
@@ -391,7 +392,7 @@ class PrimaryGraph extends BoundedSVG {
       );
     }
 
-    var labelX = xScale(lastEnteredElection === 1 ? 0.25 : lastEnteredElection) + 5;
+    var labelX = xScale(lastEnteredElection === 0 ? 0.25 : lastEnteredElection) + 5;
     var nodes = labeledCandidates.map((d, idx) => ({
       anchor : true,
       candidate : d,
@@ -621,9 +622,10 @@ export default class USPrimaries extends BoundedSVG {
 
     // we also need to know how far to go...
     var maximumDelegates = 0;
+    var lastEnteredElection = null;
     // we're making a key assumption here: that the total number
     // of allocated delegates can only go up over time
-    var lastEnteredElection = primaryDates.map((d,idx) => {
+    primaryDates.map((d,idx) => {
       // this gives us the sum of delegates allocated at each step
       return candidateTallies.map(c => c.delegates[idx]).reduce(
         (memo, n) => {
@@ -635,11 +637,12 @@ export default class USPrimaries extends BoundedSVG {
       // slightly annoying to grab this every time, but DOWN WITH
       // PREMATURE OPTIMIZATION, I SAY!
       var lastCount = ary[ary.length - 1];
-      // note that the memo lags the index by one here, which means
-      // the final output of the reduce is going to be one less than
-      // the number we actually want
-      return n === lastCount ? memo : idx;
-    }, 0) + 1;
+      lastEnteredElection = lastEnteredElection !== null ?
+        lastEnteredElection :
+        (n === lastCount ? idx : null);
+      // the reduction isn't actually something we care about, so...
+      return 0;
+    }, 0);
 
     maximumDelegates = Math.min(maximumDelegates * 1.1, primary.fullDelegateCount);
 
