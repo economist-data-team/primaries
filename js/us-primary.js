@@ -217,7 +217,7 @@ export default class USPrimaries extends BoundedSVG {
       lastEnteredElection : lastEnteredElection,
       numPrimaries : numPrimaries,
       // January is (very imperfect) code for superdelegates
-      superdelegates : primaryDates[0].getMonth() === 0
+      superdelegates : primaryDates.length > 0 && primaryDates[0].getMonth() === 0
     };
 
     var dateLabelProps = {

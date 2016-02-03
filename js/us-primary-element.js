@@ -69,20 +69,26 @@ export default class USPrimaryElement extends React.Component {
       strokeWidth : this.props.strokeWidth,
       d : STAR_PATH
     };
+    // this superdelegate stuff is all a huge hack!
     var superDelegateProps = {
-      width : this.props.dim - 1,
-      height : 200,
+      width : this.props.dim,
+      height : 316,
       x : -this.props.dim / 2 - 1,
-      y : -this.props.dim / 2 - 15,
-      fill : colours.grey[5]
+      y : -this.props.dim / 2 - 18,
+      fill : colours.grey[6]
     };
     var fontSize = 14;
+
+    var superdel = this.props.type === 'superdelegates';
+
     var textProps = {
       fill : fillLuminance > LUMINANCE_THRESHOLD ? 'black' : 'white',
       fontSize : fontSize,
       fontWeight : 'bold',
-      y : fontSize / 2.75,
-      textAnchor : 'middle'
+      x : superdel ? 22 : 0,
+      y : superdel ? 2.5 : fontSize / 2.75,
+      textAnchor : superdel ? 'end' : 'middle',
+      transform : superdel ? 'rotate(-90)' : ''
     };
 
     var geomElement;
@@ -101,13 +107,15 @@ export default class USPrimaryElement extends React.Component {
         geomElement = (<path {...starProps} />);
     }
 
+    var label = superdel ? 'Superdelegates' : this.props.state;
+
     var groupProps = Im.extend({
       transform : translate
     }, primaryEvents);
 
     return (<g {...groupProps}>
       {geomElement}
-      <text {...textProps}>{this.props.state}</text>
+      <text {...textProps}>{label}</text>
     </g>);
   }
 }
