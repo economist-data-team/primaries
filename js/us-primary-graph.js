@@ -74,8 +74,6 @@ export default class PrimaryGraph extends BoundedSVG {
       );
     }
 
-    console.log(this.props.candidates);
-
     if(this.props.superdelegates) {
       var space = xScale(1) - xScale(0) - 2;
       var barWidth = space / (count - 1);
@@ -102,7 +100,7 @@ export default class PrimaryGraph extends BoundedSVG {
       superDelegateLineJoin.exit().remove();
       superDelegateLineJoin.attr({
         stroke : d => d.colour,
-        x1 : (d, idx) => xStart(d, idx) + 0.15, // to make antialiasing look a bit nicer 
+        x1 : (d, idx) => xStart(d, idx) + 0.15, // to make antialiasing look a bit nicer
         x2 : xScale(0.51), // to overlap just slightly with the real trace
         y1 : yPosition,
         y2 : yPosition
