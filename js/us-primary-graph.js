@@ -37,8 +37,8 @@ export default class PrimaryGraph extends BoundedSVG {
     });
   }
   render() {
-    const LUMINANCE_THRESHOLD = this.props.luminanceThreshold;
 
+    const LUMINANCE_THRESHOLD = this.props.luminanceThreshold;
     var el = this.el;
     var sel = d3.select(el);
     sel.attr({ ref : 'main' });
