@@ -57,10 +57,19 @@ class StateInfoWindowRaw extends React.Component {
 }
 
 
-var USPrimaries = connectMap({
-  data : 'data',
-  party : 'party',
-  focusPrimary : 'focusPrimary'
+// var USPrimaries = connectMap({
+//   data : 'data',
+//   party : 'party',
+//   focusPrimary : 'focusPrimary'
+// })(USPrimariesRaw);
+var USPrimaries = connect(function(state) {
+  return {
+    focusPrimary : state.focusPrimary,
+    party : state.party,
+    data : state.data.map(d => Im.extend(d, {
+      date : new Date(d.date)
+    }))
+  };
 })(USPrimariesRaw);
 var ToggleBar = connectMap({
   value : 'party'
