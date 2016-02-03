@@ -1,5 +1,6 @@
 import React from 'react';
 import chroma from 'chroma-js';
+import colours from './econ_colours.js';
 import { Im, mapValues, mapToObject, generateTranslateString } from './utilities.js';
 
 export default class USPrimaryElement extends React.Component {
@@ -68,6 +69,13 @@ export default class USPrimaryElement extends React.Component {
       strokeWidth : this.props.strokeWidth,
       d : STAR_PATH
     };
+    var superDelegateProps = {
+      width : this.props.dim - 1,
+      height : 200,
+      x : -this.props.dim / 2 - 1,
+      y : -this.props.dim / 2 - 15,
+      fill : colours.grey[5]
+    };
     var fontSize = 14;
     var textProps = {
       fill : fillLuminance > LUMINANCE_THRESHOLD ? 'black' : 'white',
@@ -84,6 +92,9 @@ export default class USPrimaryElement extends React.Component {
         break;
       case 'caucus':
         geomElement = (<circle {...circProps} />);
+        break;
+      case 'superdelegates':
+        geomElement = (<rect {...superDelegateProps} />);
         break;
       default:
         // convention, probably
