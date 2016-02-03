@@ -51,8 +51,11 @@ export default class PrimaryGraph extends BoundedSVG {
       this.bottomBound, this.topBound
     ]);
 
+    var count = this.props.candidates.length;
+
     var primaryPathFn = d3.svg.line()
-      .x((d,idx) => xScale(idx))
+      .x((d,idx) => this.props.superdelegates && idx === 0 ?
+        xScale(0.5) : xScale(idx))
       .y((d,idx) => yScale(d))
       .interpolate('step');
 
@@ -74,7 +77,11 @@ export default class PrimaryGraph extends BoundedSVG {
     console.log(this.props.candidates);
 
     if(this.props.superdelegates) {
-      var space = xScale(1) - xScale(0);
+      var space = xScale(1) - xScale(0) - 2;
+      var barWidth = space / (count - 1);
+
+      let xStart = (d, idx) => xScale(-0.5) + idx * space / count;
+      let yPosition = d => yScale(d.delegates[0]);
 
       var superDelegateJoin = sel.selectAll('.superdelegate-bar')
         .data(this.props.candidates);
@@ -82,14 +89,27 @@ export default class PrimaryGraph extends BoundedSVG {
         .classed('superdelegate-bar', true);
       superDelegateJoin.exit().remove();
       superDelegateJoin.attr({
-        x : (d,idx) => xScale(0.5) - (idx + 1) * space/3,
-        y : d => yScale(d.delegates[0]),
-        width : space/2 - space/6,
+        x : xStart,
+        y : yPosition,
+        width : barWidth,
         height : d => yScale(0) - yScale(d.delegates[0]),
         fill : d => d.colour
       });
+      var superDelegateLineJoin = sel.selectAll('.superdelegate-line')
+        .data(this.props.candidates);
+      superDelegateLineJoin.enter().append('svg:line')
+        .classed('superdelegate-line trace', true);
+      superDelegateLineJoin.exit().remove();
+      superDelegateLineJoin.attr({
+        stroke : d => d.colour,
+        x1 : (d, idx) => xStart(d, idx) + 0.15, // to make antialiasing look a bit nicer 
+        x2 : xScale(0.51), // to overlap just slightly with the real trace
+        y1 : yPosition,
+        y2 : yPosition
+      });
     } else {
       sel.selectAll('.superdelegate-bar').remove();
+      sel.selectAll('.superdelegate-line').remove();
     }
 
     var labelX = xScale(lastEnteredElection === 0 ? 0.25 : lastEnteredElection) + 5;
@@ -185,18 +205,16 @@ export default class PrimaryGraph extends BoundedSVG {
         r : 3,
         'data-name' : d => d.displaySurname
       });
-      sel.selectAll('.trace').remove();
+      sel.selectAll('.trace-line').remove();
     } else {
-      var traceJoin = sel.selectAll('.trace')
+      var traceJoin = sel.selectAll('.trace-line')
         .data(this.props.candidates);
 
       traceJoin.enter().append('svg:path')
-        .classed('trace', true);
+        .classed('trace trace-line', true);
       traceJoin.exit().remove();
       traceJoin.attr({
-        fill : 'none',
         stroke : d => d.colour,
-        strokeWidth: 2,
         d : d => primaryPathFn(
           d.delegates.slice(0, this.props.lastEnteredElection + 1)
         )

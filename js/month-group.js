@@ -68,7 +68,7 @@ export default class MonthGroup extends BoundedSVG {
   }
   render() {
     var scale = this.props.scale;
-    var cumulative = this.leftBound - 2;
+    var cumulative = scale(-0.5);
     var monthElements = this.props.monthSections.map((d,idx) => {
       var width = scale(d) - scale(0);
       var monthProps = {

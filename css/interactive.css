@@ -8,6 +8,10 @@
   letter-spacing: -0.4px;
 }
 
+.trace {
+  fill : none;
+  stroke-width: 2;
+}
 .trace-label {
   text-transform: uppercase;
   font-size: 14px;
