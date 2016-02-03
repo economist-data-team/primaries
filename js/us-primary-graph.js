@@ -37,8 +37,8 @@ export default class PrimaryGraph extends BoundedSVG {
     });
   }
   render() {
-
     const LUMINANCE_THRESHOLD = this.props.luminanceThreshold;
+
     var el = this.el;
     var sel = d3.select(el);
     sel.attr({ ref : 'main' });
@@ -69,6 +69,27 @@ export default class PrimaryGraph extends BoundedSVG {
       labeledCandidates = labeledCandidates.filter(
         c => c.delegates[numPrimaries - 1] >= countTarget + 1
       );
+    }
+
+    console.log(this.props.candidates);
+
+    if(this.props.superdelegates) {
+      var space = xScale(1) - xScale(0);
+
+      var superDelegateJoin = sel.selectAll('.superdelegate-bar')
+        .data(this.props.candidates);
+      superDelegateJoin.enter().append('svg:rect')
+        .classed('superdelegate-bar', true);
+      superDelegateJoin.exit().remove();
+      superDelegateJoin.attr({
+        x : (d,idx) => xScale(0.5) - (idx + 1) * space/3,
+        y : d => yScale(d.delegates[0]),
+        width : space/2 - space/6,
+        height : d => yScale(0) - yScale(d.delegates[0]),
+        fill : d => d.colour
+      });
+    } else {
+      sel.selectAll('.superdelegate-bar').remove();
     }
 
     var labelX = xScale(lastEnteredElection === 0 ? 0.25 : lastEnteredElection) + 5;
