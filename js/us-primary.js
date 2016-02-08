@@ -69,7 +69,7 @@ CANDIDATES.forEach(d => {
 
 const PRIMARIES = {
   DEM : {
-    fullDelegateCount : 4764,
+    fullDelegateCount : 4763,
     colours : ['#005994','#2eb6bc','#7199ad']
   },
   GOP : {
@@ -215,6 +215,15 @@ export default class USPrimaries extends BoundedSVG {
       return 0;
     }, 0);
 
+    // we want to work out if there's enough delegates to merit
+    // showing the "win line". This done if anyone is at 30% of total
+    // delegates (i.e. 60% of the delegates they need to win).
+    var winLine = null;
+    if(maximumDelegates > primary.fullDelegateCount * 0.30) {
+      maximumDelegates = Math.max(primary.fullDelegateCount / 2, maximumDelegates);
+      winLine = Math.ceil(primary.fullDelegateCount / 2);
+    }
+
     maximumDelegates = Math.min(maximumDelegates * 1.1, primary.fullDelegateCount);
 
     var primaryGraphProps = {
@@ -226,6 +235,7 @@ export default class USPrimaries extends BoundedSVG {
       lastEnteredElection : lastEnteredElection,
       numPrimaries : numPrimaries,
       handlers : this.props.graphHandlers,
+      winLine : winLine,
       // January is (very imperfect) code for superdelegates
       superdelegates : primaryDates.length > 0 && primaryDates[0].getMonth() === 0
     };

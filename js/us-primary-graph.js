@@ -226,6 +226,37 @@ export default class PrimaryGraph extends BoundedSVG {
       sel.selectAll('.trace-dot').remove();
     }
 
+    var self = this;
+    var winLine = this.props.winLine ? [this.props.winLine] : [];
+    console.log(winLine, this.props.winLine);
+    var winLineJoin = sel.selectAll('.win-line-container')
+      .data(winLine);
+    winLineJoin.enter().append('svg:g')
+      .classed('win-line-container', true)
+      .each(function() {
+        var sel = d3.select(this);
+        sel.append('svg:line')
+          .classed('win-line', true)
+          .attr({
+            y1 : 0,
+            y2 : 0,
+            x1 : self.leftBound,
+            x2 : self.rightBound
+          });
+        sel.append('svg:text')
+          .classed('win-line-label', true)
+          .text(n => `Needed to win: ${n} delegates`)
+          .attr({
+            x : self.rightBound,
+            y : -3,
+            textAnchor : 'end'
+          });
+      });
+    winLineJoin.exit().remove();
+    winLineJoin.attr({
+      transform : n => generateTranslateString(0, yScale(n))
+    });
+
     return el.toReact();
   }
 }
