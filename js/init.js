@@ -19,7 +19,8 @@ import { createStore, compose } from 'redux';
 import { connect, Provider } from 'react-redux';
 
 import {
-  updateData, updateParty, focusPrimary, clearFocusPrimary
+  updateData, updateParty, focusPrimary, clearFocusPrimary,
+  focusCandidate, clearFocusCandidate
 } from './actions.js';
 import updateState from './reducers.js'
 
@@ -64,11 +65,16 @@ class StateInfoWindowRaw extends React.Component {
 // })(USPrimariesRaw);
 var USPrimaries = connect(function(state) {
   return {
+    focusCandidate : state.focusCandidate,
     focusPrimary : state.focusPrimary,
     party : state.party,
     data : state.data.map(d => Im.extend(d, {
       date : new Date(d.date)
-    }))
+    })),
+    graphHandlers : {
+      mouseenter : d => store.dispatch(focusCandidate(d)),
+      mouseleave : d => store.dispatch(clearFocusCandidate())
+    }
   };
 })(USPrimariesRaw);
 var ToggleBar = connectMap({

@@ -3,7 +3,7 @@ import chroma from 'chroma-js';
 import d3 from 'd3';
 import RFD from 'react-faux-dom';
 import BoundedSVG from './bounded-svg.js';
-import { Im, bindValueToRange, generateTranslateString, guarantee } from './utilities.js';
+import { Im, bindValueToRange, generateTranslateString, guarantee, mapValues } from './utilities.js';
 
 // oh god, this is an absurd, but the only way of getting these widths right
 var canvas = document.createElement('canvas');
@@ -51,6 +51,8 @@ export default class PrimaryGraph extends BoundedSVG {
       this.bottomBound, this.topBound
     ]);
 
+    var candidates = this.props.candidates;
+
     var count = this.props.candidates.length;
 
     var primaryPathFn = d3.svg.line()
@@ -82,7 +84,7 @@ export default class PrimaryGraph extends BoundedSVG {
       let yPosition = d => yScale(d.delegates[0]);
 
       var superDelegateJoin = sel.selectAll('.superdelegate-bar')
-        .data(this.props.candidates);
+        .data(candidates);
       superDelegateJoin.enter().append('svg:rect')
         .classed('superdelegate-bar', true);
       superDelegateJoin.exit().remove();
@@ -94,7 +96,7 @@ export default class PrimaryGraph extends BoundedSVG {
         fill : d => d.colour
       });
       var superDelegateLineJoin = sel.selectAll('.superdelegate-line')
-        .data(this.props.candidates);
+        .data(candidates);
       superDelegateLineJoin.enter().append('svg:line')
         .classed('superdelegate-line trace', true);
       superDelegateLineJoin.exit().remove();
@@ -146,6 +148,10 @@ export default class PrimaryGraph extends BoundedSVG {
     for(let i=0;i<500;++i) { force.tick(); }
     force.stop();
 
+    var labelHandlers = mapValues(this.props.handlers, h => function(d) {
+      return h(d.candidate)
+    });
+
     var labelJoin = sel.selectAll('.trace-label-container')
       .data(nodes.filter(d => !d.anchor));
 
@@ -163,7 +169,7 @@ export default class PrimaryGraph extends BoundedSVG {
             width : ctx.measureText(label.toUpperCase()).width + padding * 2,
             height : 18,
             y : -9
-          });
+          }).on(labelHandlers);
         var text = guarantee(this, 'trace-label', 'svg:text')
           .classed('ended', d.candidate.ended)
           .text(label)
@@ -191,7 +197,7 @@ export default class PrimaryGraph extends BoundedSVG {
     if(lastEnteredElection === 0) {
       // only one election—special case, no line
       var dotJoin = sel.selectAll('.trace-dot')
-        .data(this.props.candidates);
+        .data(candidates);
 
       dotJoin.enter().append('svg:circle')
         .classed('trace-dot', true);

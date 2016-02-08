@@ -22,6 +22,8 @@ const ENDED_COLOUR = colours.grey[6];
 export const DEMOCRAT = 'DEM';
 export const REPUBLICAN = 'GOP';
 
+const FADEBACK_COLOUR = colours.grey[9];
+
 const STAR_PATH = `M 0.000 6.000
                    L 9.405 12.944
                    L 5.706 1.854
@@ -80,6 +82,9 @@ const PRIMARIES = {
 export default class USPrimaries extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
+      graphHandlers : {},
+      focusCandidate : null,
+      highlight : [],
       showPrimaryGraph : true,
       duration : 250,
       rectSize : 22,
@@ -140,7 +145,11 @@ export default class USPrimaries extends BoundedSVG {
       });
     }).sort(
       (a,b) => b.delegates[numPrimaries - 1] - a.delegates[numPrimaries - 1]
-    ).map((d,idx) => Im.extend(d, { colour : d.ended ? ENDED_COLOUR : primary.colours[idx] }));
+    ).map((d,idx) => Im.extend(d, {
+      colour : this.props.focusCandidate &&
+        this.props.focusCandidate.key !== d.key ? FADEBACK_COLOUR :
+        (d.ended ? ENDED_COLOUR : primary.colours[idx])
+    }));
 
     var stateElements = [];
     for(let date in grouped) {
@@ -216,6 +225,7 @@ export default class USPrimaries extends BoundedSVG {
       candidates : candidateTallies,
       lastEnteredElection : lastEnteredElection,
       numPrimaries : numPrimaries,
+      handlers : this.props.graphHandlers,
       // January is (very imperfect) code for superdelegates
       superdelegates : primaryDates.length > 0 && primaryDates[0].getMonth() === 0
     };

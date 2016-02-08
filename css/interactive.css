@@ -12,10 +12,15 @@
   fill : none;
   stroke-width: 2;
 }
+.trace-bg {
+  cursor: pointer;
+}
 .trace-label {
   text-transform: uppercase;
   font-size: 14px;
   font-weight: bold;
+  user-select: none;
+  pointer-events: none;
 
   &.ended {
     text-decoration: line-through;
