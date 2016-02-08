@@ -34,7 +34,7 @@
 .intro-text {
   max-width: 500px;
   margin: 10px;
-  font-size: 14.5px;
+  font-size: 14px;
   line-height: 1.3;
   font-family: var(--serif-stack);
   p + p {
