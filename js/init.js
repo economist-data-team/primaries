@@ -11,6 +11,7 @@ import Header from './header.js';
 import Footer from './footer.js';
 import ToggleBarRaw from './toggle-bar.js';
 import ChartContainer from './chart-container.js';
+import StateInfoWindowRaw from './us-primaries-state-infowindow.js';
 import USPrimariesRaw, { DEMOCRAT, REPUBLICAN } from './us-primary.js';
 
 import chroma from 'chroma-js';
@@ -29,34 +30,7 @@ const DEBUGCREATESTORE = compose(
   window.devToolsExtension && window.devToolsExtension() || (f => f)
 )(createStore);
 var store = DEBUGCREATESTORE(updateState);
-window.store = store;
-
-var stateInfoDate = d3.time.format('%B %e');
-class StateInfoWindowRaw extends React.Component {
-  static get defaultProps() {
-    return {
-      state : null
-    };
-  }
-  render() {
-    if(!this.props.state) {
-      // nothing to see here...
-      return(<div></div>);
-    }
-    var state = this.props.state;
-    var block = state.state === 'SPD' ? null : (<div>
-      <div>Date of {state.type}: {stateInfoDate(state.date)}</div>
-      <div>Delegates determined by election: {state.pledged}</div>
-    </div>);
-    var textBlock = state.text ? (<p className="state-info-text">{state.text}</p>) : null;
-    return(<div className="state-info">
-      <h4>{state.state_full_name}</h4>
-      {block}
-      {textBlock}
-    </div>);
-  }
-}
-
+window.store = store; 
 
 // var USPrimaries = connectMap({
 //   data : 'data',
