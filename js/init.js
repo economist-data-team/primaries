@@ -30,7 +30,7 @@ const DEBUGCREATESTORE = compose(
   window.devToolsExtension && window.devToolsExtension() || (f => f)
 )(createStore);
 var store = DEBUGCREATESTORE(updateState);
-window.store = store; 
+window.store = store;
 
 // var USPrimaries = connectMap({
 //   data : 'data',
@@ -112,20 +112,26 @@ var chart = React.render(
   </Provider>, document.getElementById('interactive'));
 
 d3.csv('./data/results.csv', (data) => {
+  var fillMissingData = (d, attrName) => {
+    var ret = d[attrName] ? d[attrName] :
+    // this is not especially efficient, but it works so we'll
+    // stick with it...
+    //
+    // we find both primaries for this state
+    data.filter(d2 => d2.state === d.state)
+      // strip down to just the texts
+      .map(s => s[attrName])
+      // and grab the first populated text field we find
+      .reduce((memo, s) => memo ? memo : s, "");
+    return ret;
+  };
+
   data = data.map((d) => {
-    var text = d.text ? d.text :
-      // this is not especially efficient, but it works so we'll
-      // stick with it...
-      //
-      // we find both primaries for this state
-      data.filter(d2 => d2.state === d.state)
-        // strip down to just the texts
-        .map(s => s.text)
-        // and grab the first populated text field we find
-        .reduce((memo, s) => memo ? memo : s, "");
     return Im.extend(d, {
       date : dateParser.parse(d.date),
-      text : text
+      text : fillMissingData(d, 'text'),
+      obama2012 : fillMissingData(d, 'obama2012'),
+      romney2012 : fillMissingData(d, 'romney2012')
     });
   });
   data = data.map(parseNumerics);
