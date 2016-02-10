@@ -219,16 +219,21 @@ export default class PrimaryGraph extends BoundedSVG {
       traceJoin.exit().remove();
       traceJoin.attr({
         stroke : d => d.colour,
+        opacity : d => !this.props.focusCandidate ||
+          this.props.focusCandidate.key === d.key ? 1 : 0.2,
         d : d => primaryPathFn(
           d.delegates.slice(0, this.props.lastEnteredElection + 1)
         )
+      // }).sort((a,b) => {
+      //   if(!this.props.focusCandidate) { return 0; }
+      //   console.log(a, b);
+      //   return b.key === this.props.focusCandidate.key ? 1 : 0;
       });
       sel.selectAll('.trace-dot').remove();
     }
 
     var self = this;
     var winLine = this.props.winLine ? [this.props.winLine] : [];
-    console.log(winLine, this.props.winLine);
     var winLineJoin = sel.selectAll('.win-line-container')
       .data(winLine);
     winLineJoin.enter().append('svg:g')

@@ -236,6 +236,7 @@ export default class USPrimaries extends BoundedSVG {
       numPrimaries : numPrimaries,
       handlers : this.props.graphHandlers,
       winLine : winLine,
+      focusCandidate : this.props.focusCandidate,
       // January is (very imperfect) code for superdelegates
       superdelegates : primaryDates.length > 0 && primaryDates[0].getMonth() === 0
     };
