@@ -5,12 +5,14 @@ import colours from './econ_colours.js';
 import { generateTranslateString } from './utilities.js';
 
 var stateInfoDate = d3.time.format('%B %e');
+var stateInfoMonth = d3.time.format('%b');
 var tau = Math.PI * 2;
 
 export default class StateInfobox extends React.Component {
   static get defaultProps() {
     return {
-      arc2012radius : 35,
+      squareSize : 40,
+      arc2012radius : 45,
       state : null
     };
   }
@@ -19,15 +21,15 @@ export default class StateInfobox extends React.Component {
 
     var el = RFD.createElement('svg')
     var sel = d3.select(el);
-    sel.attr({ height : radius * 2 + 12, width : radius * 2});
+    sel.attr({ height : radius * 2 + 0, width : radius * 2});
 
     var group = sel.append('svg:g')
-      .attr('transform', generateTranslateString(radius, radius + 12));
+      .attr('transform', generateTranslateString(radius, radius + 0));
 
     console.log(this.props.state);
 
     var arc = d3.svg.arc()
-      .innerRadius(radius * 0.3)
+      .innerRadius(radius * 0.33)
       .outerRadius(radius)
       .startAngle(0);
 
@@ -51,6 +53,7 @@ export default class StateInfobox extends React.Component {
       });
     var obamaLabel = group.append('svg:text')
       .text(pctFormat(obamaShare))
+      .classed('state-info-wedge-label', true)
       .attr({
         textAnchor : 'middle',
         fontSize : 12,
@@ -66,22 +69,39 @@ export default class StateInfobox extends React.Component {
       });
     var romneyLabel = group.append('svg:text')
       .text(pctFormat(romneyShare))
+      .classed('state-info-wedge-label', true)
       .attr({
         textAnchor : 'middle',
-        fontSize: 12,
+        fontSize : 12,
         transform : generateTranslateString(arc.centroid({endAngle : romneyAngle}))
       });
 
-    var title = sel.append('svg:text')
-      .text('2012 result')
+    var title = group.append('svg:text')
+      .text('2012')
+      .classed('state-info-pie-label', true)
       .attr({
         textAnchor : 'middle',
-        x : radius,
-        y : 10,
+        // x : radius,
+        y : 4,
         fontSize : 12
       });
 
     return el.toReact();
+  }
+  get calendarPage() {
+    if(this.props.state.state === 'SPD') { return null; }
+    var squareSize = this.props.squareSize;
+    var date = new Date(this.props.state.date);
+
+    return (<svg height={squareSize + 2} width={squareSize + 2} className="state-info-calendar-page">
+      <g transform="translate(1,1)">
+        <rect height={squareSize} width={squareSize} fill="white"/>
+        <rect height="14" width={squareSize} fill={colours.red[1]} />
+        <rect height={squareSize} width={squareSize} fill="none" stroke={colours.grey[1]}/>
+        <text x={squareSize/2} y="11" fontSize="12" textAnchor="middle" className="calendar-month-label">{stateInfoMonth(date)}</text>
+        <text x={squareSize/2} y={squareSize * 0.9} fontSize={squareSize * 0.67} textAnchor="middle" className="calendar-day-label">{date.getDate()}</text>
+      </g>
+    </svg>);
   }
   render() {
     if(!this.props.state) {
@@ -97,10 +117,15 @@ export default class StateInfobox extends React.Component {
     </div>);
     var textBlock = state.text ? (<p className="state-info-text">{state.text}</p>) : null;
     return(<div className="state-info">
-      <h4>{state.state_full_name}</h4>
-      {this.pie2012}
-      {block}
-      {textBlock}
+      <div className="state-info-left">
+        <h4>{state.state_full_name}</h4>
+        {block}
+        {textBlock}
+      </div>
+      <div class="state-info-box">
+        {this.calendarPage}
+        {this.pie2012}
+      </div>
     </div>);
   }
 }

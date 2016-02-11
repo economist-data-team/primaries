@@ -66,11 +66,27 @@
   bottom: 75px;
   border: 1px solid var(--grey-5);
   padding: 3px 5px;
+  display: flex;
+}
+.state-info-box {
 }
 .state-info-text {
   font-family: var(--serif-stack);
   font-size: 15px; line-height: 1.3;
   margin-top: 0.5em;
+}
+.state-info-pie-label {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: -0.5px;
+}
+.calendar-month-label {
+  font-weight: bold;
+  fill: white;
+  text-transform: uppercase;
+}
+.calendar-day-label {
+  font-weight: bold;
 }
 
 .primary-calendar {
