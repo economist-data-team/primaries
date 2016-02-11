@@ -63,9 +63,10 @@
   max-width: 60%;
   position: absolute;
   right: 15px;
-  bottom: 75px;
+  bottom: 35px;
   border: 1px solid var(--grey-5);
   padding: 3px 5px;
+  background-color: white;
   display: flex;
 }
 .state-info-box {
@@ -92,11 +93,29 @@
   text-transform: uppercase;
 }
 .delegate-count,
+.candidate-delegate-count,
+.candidate-bar-percent,
 .calendar-day-label {
   font-weight: bold;
 }
 .delegate-count {
   letter-spacing: -2px;
+}
+.candidate-delegate-count {
+  letter-spacing: -0.5px;
+}
+.candidate-delegate-count,
+.candidate-delegate-label {
+  font-style: italic;
+}
+
+.candidate-bar-axis .tick line {
+  stroke: white;
+  stroke-width: 2;
+  opacity: 0.6;
+}
+.candidate-bar-axis .tick text {
+  font-size: 13px;
 }
 
 .primary-calendar {

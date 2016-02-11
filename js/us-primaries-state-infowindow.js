@@ -2,7 +2,10 @@ import d3 from 'd3';
 import React from 'react';
 import RFD from 'react-faux-dom';
 import colours from './econ_colours.js';
-import { generateTranslateString } from './utilities.js';
+import { Im, generateTranslateString, generateRectPolygonString,
+  addDOMProperty } from './utilities.js';
+
+addDOMProperty('strokeWeight', 'stroke-weight');
 
 var stateInfoDate = d3.time.format('%B %e');
 var stateInfoMonth = d3.time.format('%b');
@@ -25,8 +28,6 @@ export default class StateInfobox extends React.Component {
 
     var group = sel.append('svg:g')
       .attr('transform', generateTranslateString(radius, radius + 0));
-
-    console.log(this.props.state);
 
     var arc = d3.svg.arc()
       .innerRadius(radius * 0.33)
@@ -114,6 +115,101 @@ export default class StateInfobox extends React.Component {
       </g>
     </svg>);
   }
+  get resultsChart() {
+    var stateCandidates = this.props.candidates.map(c => Im.extend(c, {
+      state_pct : this.props.state[`${c.key}_pct`],
+      state_del : this.props.state[`${c.key}_del`]
+    }))
+      .filter(c => c.state_pct !== "")
+      .sort((a,b) => b.state_pct - a.state_pct);
+
+    console.log(stateCandidates);
+    // if there are no results, stop here and show nothing
+    if(stateCandidates.length === 0) { return null; }
+
+    // results! Let's make a chart.
+
+    // we can use stateCandidates[0] since we already sorted them here
+    var scale = d3.scale.linear()
+      .domain([0, stateCandidates[0].state_pct])
+      .nice() // no ending on 60.3!
+      .range([0, 100]);
+
+    // only show the top 4...
+    var topCandidates = stateCandidates.slice(0,4);
+    var barHeight = 16;
+    var bars = topCandidates
+      .map((c, idx) => {
+        var groupProps = {
+          transform : generateTranslateString(0, idx * (barHeight + 2) + 15)
+        };
+
+        var barLength = scale(c.state_pct);
+
+        var barProps = {
+          x : 50,
+          width : barLength,
+          height : barHeight,
+          fill : c.colour
+        };
+        var labelProps = {
+          x : 48, y : 12,
+          fontSize : 14,
+          textAnchor : 'end',
+          className : 'delegate-bar-label'
+        };
+        var delegateBgProps = {
+          x : 160, y: 1, height : barHeight - 2, width : 24,
+          stroke : 'black',
+          strokeWidth : 0.5,
+          fill : 'white'
+        };
+        var percentOverBar = barLength > 40;
+        var percentProps = {
+          x : 50 + (percentOverBar ? barLength - 2 : barLength + 2),
+          y : 12,
+          fontSize: 13,
+          textAnchor : percentOverBar ? 'end' : 'start',
+          fill : percentOverBar ? 'white' : c.colour,
+          className : 'candidate-bar-percent'
+        }
+        var countProps = {
+          // -1 here is because of the way italics render...
+          x : 172 - 1, y : 13,
+          fontSize: 14,
+          className : 'candidate-delegate-count',
+          fill : c.colour,
+          textAnchor : 'middle'
+        };
+
+        return (<g {...groupProps}>
+          <rect {...barProps} />
+          <rect {...delegateBgProps} />
+          <text {...labelProps}>{c.displaySurname}</text>
+          <text {...percentProps}>{`${c.state_pct}%`}</text>
+          <text {...countProps}>{c.state_del}</text>
+        </g>);
+      });
+
+    var el = RFD.createElement('g');
+    var sel = d3.select(el)
+      .classed('candidate-bar-axis', true)
+      .attr('transform', generateTranslateString(50,15));
+
+    var axis = d3.svg.axis()
+      .scale(scale)
+      .ticks(4)
+      .outerTickSize(0)
+      .innerTickSize(-50)
+      .orient('top');
+
+    sel.call(axis);
+
+    return (<svg width="200" height={topCandidates.length * (barHeight + 2) + 15}>
+      {bars}
+      <text x="185" y="12" fontSize="13" textAnchor="end" className="candidate-delegate-label">Delegates won</text>
+    </svg>)
+  }
   render() {
     if(!this.props.state) {
       // nothing to see here...
@@ -129,7 +225,7 @@ export default class StateInfobox extends React.Component {
     return(<div className="state-info">
       <div className="state-info-left">
         <h4>{state.state_full_name}</h4>
-        {block}
+        {this.resultsChart}
         {textBlock}
       </div>
       <div className="state-info-box">

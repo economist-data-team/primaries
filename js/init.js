@@ -93,10 +93,7 @@ class Chart extends ChartContainer {
           are declared, through “Super Tuesday” on March 1st and beyond to the
           final Democratic nomination in Washington, DC, on June 14th.</p>
         </div>
-        <svg width="595" height={primariesHeight}>
-          <USPrimaries {...primaryProps} />
-        </svg>
-        <StateInfoWindow />
+        <USPrimaries {...primaryProps} />
         <Footer sources={['RealClearPolitics', 'The Green Papers', 'Ballotpedia', 'Associated Press']}
           notes={notes}/>
       </div>
