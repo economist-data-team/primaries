@@ -10,7 +10,7 @@ var tau = Math.PI * 2;
 export default class StateInfobox extends React.Component {
   static get defaultProps() {
     return {
-      arc2012radius : 25,
+      arc2012radius : 35,
       state : null
     };
   }
@@ -19,15 +19,15 @@ export default class StateInfobox extends React.Component {
 
     var el = RFD.createElement('svg')
     var sel = d3.select(el);
-    sel.attr({ height : radius * 2, width : radius * 2});
+    sel.attr({ height : radius * 2 + 12, width : radius * 2});
 
     var group = sel.append('svg:g')
-      .attr('transform', generateTranslateString(radius, radius));
+      .attr('transform', generateTranslateString(radius, radius + 12));
 
     console.log(this.props.state);
 
     var arc = d3.svg.arc()
-      .innerRadius(radius * 0.4)
+      .innerRadius(radius * 0.3)
       .outerRadius(radius)
       .startAngle(0);
 
@@ -37,17 +37,49 @@ export default class StateInfobox extends React.Component {
         fill : colours.grey[8]
       });
 
+    var obamaShare = this.props.state.obama2012 / 100;
+    var romneyShare = this.props.state.romney2012 / 100;
+
+    var obamaAngle = tau * -1 * obamaShare;
+    var romneyAngle = tau * romneyShare;
+    var pctFormat = d3.format('.2p');
+
     var obamaArc = group.append('svg:path')
       .attr({
-        d : arc({endAngle : tau * -1 * this.props.state.obama2012 / 100}),
+        d : arc({endAngle : obamaAngle}),
         fill : colours.usParty.dem
+      });
+    var obamaLabel = group.append('svg:text')
+      .text(pctFormat(obamaShare))
+      .attr({
+        textAnchor : 'middle',
+        fontSize : 12,
+        transform : generateTranslateString(arc.centroid({
+          endAngle : obamaAngle
+        }))
       });
 
     var romneyArc = group.append('svg:path')
       .attr({
-        d : arc({endAngle : tau * this.props.state.romney2012 / 100}),
+        d : arc({endAngle : romneyAngle}),
         fill : colours.usParty.gop
-      })
+      });
+    var romneyLabel = group.append('svg:text')
+      .text(pctFormat(romneyShare))
+      .attr({
+        textAnchor : 'middle',
+        fontSize: 12,
+        transform : generateTranslateString(arc.centroid({endAngle : romneyAngle}))
+      });
+
+    var title = sel.append('svg:text')
+      .text('2012 result')
+      .attr({
+        textAnchor : 'middle',
+        x : radius,
+        y : 10,
+        fontSize : 12
+      });
 
     return el.toReact();
   }
@@ -58,6 +90,7 @@ export default class StateInfobox extends React.Component {
     }
 
     var state = this.props.state;
+    state.date = new Date(state.date);
     var block = state.state === 'SPD' ? null : (<div>
       <div>Date of {state.type}: {stateInfoDate(state.date)}</div>
       <div>Delegates determined by election: {state.pledged}</div>

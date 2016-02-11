@@ -242,10 +242,10 @@ export default class USPrimaries extends BoundedSVG {
     };
 
     var dateLabelProps = {
-      date : this.props.focusPrimary ? this.props.focusPrimary.date : null,
+      date : this.props.focusPrimary ? new Date(this.props.focusPrimary.date) : null,
       position: this.props.focusPrimary ?
         [
-          scale(primaryDateComparisons.indexOf(this.props.focusPrimary.date.getTime())),
+          scale(primaryDateComparisons.indexOf(new Date(this.props.focusPrimary.date).getTime())),
           this.props.showPrimaryGraph ? 160 : 10
         ] : [0,0]
     };
