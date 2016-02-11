@@ -31,3 +31,17 @@ super {
   font-size: 12px;
   vertical-align: super;
 }
+
+.interactive-footer .source-element {
+  &:after {
+    content : '; ';
+  }
+
+  &:last-child:after {
+    content : '';
+  }
+}
+
+.notes {
+  text-align: right;
+}

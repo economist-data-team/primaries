@@ -88,6 +88,17 @@ export default class StateInfobox extends React.Component {
 
     return el.toReact();
   }
+  get delegateCount() {
+    var squareSize = this.props.squareSize;
+    return (<svg height={squareSize + 2} width={squareSize + 2}>
+      <g transform="translate(1,1)">
+        <rect height={squareSize} width={squareSize} fill="white" />
+        <rect height={squareSize} width={squareSize} fill="none" stroke={colours.grey[1]} />
+        <text x={squareSize / 2} y={squareSize * 0.6} fontSize={squareSize * 0.67} textAnchor="middle" className="delegate-count">{this.props.state.pledged}</text>
+        <text x={squareSize / 2} y={squareSize - 2} fontSize="12" textAnchor="middle" className="delegate-label">Dels*</text>
+      </g>
+    </svg>);
+  }
   get calendarPage() {
     if(this.props.state.state === 'SPD') { return null; }
     var squareSize = this.props.squareSize;
@@ -112,7 +123,6 @@ export default class StateInfobox extends React.Component {
     var state = this.props.state;
     state.date = new Date(state.date);
     var block = state.state === 'SPD' ? null : (<div>
-      <div>Date of {state.type}: {stateInfoDate(state.date)}</div>
       <div>Delegates determined by election: {state.pledged}</div>
     </div>);
     var textBlock = state.text ? (<p className="state-info-text">{state.text}</p>) : null;
@@ -122,8 +132,11 @@ export default class StateInfobox extends React.Component {
         {block}
         {textBlock}
       </div>
-      <div class="state-info-box">
-        {this.calendarPage}
+      <div className="state-info-box">
+        <div className="side-boxes">
+          {this.delegateCount}
+          {this.calendarPage}
+        </div>
         {this.pie2012}
       </div>
     </div>);

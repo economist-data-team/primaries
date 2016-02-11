@@ -77,6 +77,8 @@ class Chart extends ChartContainer {
     var primariesHeight = 550;
     primaryProps.height = primariesHeight;
 
+    var notes = [<span className="note">*Bound by primary result</span>];
+
     return(
       <div className='chart-container'>
         <Header title="2016 US primary-elections calendar" subtitle="Delegate support, to date"/>
@@ -95,7 +97,8 @@ class Chart extends ChartContainer {
           <USPrimaries {...primaryProps} />
         </svg>
         <StateInfoWindow />
-        <Footer sources={['RealClearPolitics', 'The Green Papers', 'Ballotpedia', 'Associated Press']} />
+        <Footer sources={['RealClearPolitics', 'The Green Papers', 'Ballotpedia', 'Associated Press']}
+          notes={notes}/>
       </div>
     );
   }

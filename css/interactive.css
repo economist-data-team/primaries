@@ -69,6 +69,12 @@
   display: flex;
 }
 .state-info-box {
+  margin-left: 5px;
+}
+.side-boxes {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
 }
 .state-info-text {
   font-family: var(--serif-stack);
@@ -85,8 +91,12 @@
   fill: white;
   text-transform: uppercase;
 }
+.delegate-count,
 .calendar-day-label {
   font-weight: bold;
+}
+.delegate-count {
+  letter-spacing: -2px;
 }
 
 .primary-calendar {
