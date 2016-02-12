@@ -17,7 +17,7 @@ var arcPad = 6;
 export default class StateInfobox extends React.Component {
   static get defaultProps() {
     return {
-      squareSize : 41,
+      squareSize : 48,
       arc2012radius : 46,
       delegateHeight : 48,
       state : null
@@ -285,15 +285,21 @@ export default class StateInfobox extends React.Component {
 
     var textBlock = state.text ? (<p className="state-info-text">{state.text}</p>) : null;
     return(<div className="state-info">
-      <div className="state-info-left">
-        <h4>{state.state_full_name}</h4>
-        {this.resultsChart}
-        {textBlock}
+      <div className="combine-top-box">
+        <h3 className="state-info-box-title">{state.state_full_name}</h3>
+        <div className="right-group">
+          {this.calendarPage}
+          {this.delegateCount}
+        </div>
       </div>
-      <div className="state-info-box" style={containerStyle}>
-        {this.calendarPage}
-        {this.delegateCount}
-        {this.pie2012}
+      <div className="combine-bottom-box">
+        <div className="state-info-left">
+          {this.resultsChart}
+          {textBlock}
+        </div>
+        <div className="state-info-box" style={containerStyle}>
+          {this.pie2012}
+        </div>
       </div>
     </div>);
   }
