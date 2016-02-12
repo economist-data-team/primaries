@@ -94,7 +94,7 @@ export default class StateInfobox extends React.Component {
     return (<svg height={squareSize + 2} width={squareSize + 2}>
       <g transform="translate(1,1)">
         <rect height={squareSize} width={squareSize} fill="white" />
-        <rect height={squareSize} width={squareSize} fill="none" stroke={colours.grey[1]} />
+        <rect height={squareSize} width={squareSize} fill="none" stroke="black" strokeWeight="0.5" />
         <text x={squareSize / 2} y={squareSize * 0.6} fontSize={squareSize * 0.67} textAnchor="middle" className="delegate-count">{this.props.state.pledged}</text>
         <text x={squareSize / 2} y={squareSize - 2} fontSize="12" textAnchor="middle" className="delegate-label">Dels*</text>
       </g>
@@ -109,7 +109,7 @@ export default class StateInfobox extends React.Component {
       <g transform="translate(1,1)">
         <rect height={squareSize} width={squareSize} fill="white"/>
         <rect height="14" width={squareSize} fill={colours.red[1]} />
-        <rect height={squareSize} width={squareSize} fill="none" stroke={colours.grey[1]}/>
+        <rect height={squareSize} width={squareSize} fill="none" stroke="black" strokeWeight="0.5"/>
         <text x={squareSize/2} y="11" fontSize="12" textAnchor="middle" className="calendar-month-label">{stateInfoMonth(date)}</text>
         <text x={squareSize/2} y={squareSize * 0.9} fontSize={squareSize * 0.67} textAnchor="middle" className="calendar-day-label">{date.getDate()}</text>
       </g>
