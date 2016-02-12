@@ -19,7 +19,7 @@ export default class StateInfobox extends React.Component {
     return {
       squareSize : 41,
       arc2012radius : 46,
-      delegateHeight : 54,
+      delegateHeight : 48,
       state : null
     };
   }
@@ -34,16 +34,16 @@ export default class StateInfobox extends React.Component {
     var sel = d3.select(el);
 
     var group = sel.append('svg:g')
-      .attr('transform', generateTranslateString(radius, radius + arcPad * 2));
+      .attr('transform', generateTranslateString(radius, radius));
 
     var arc = d3.svg.arc()
       .innerRadius(radius * 0.33)
       .outerRadius(radius)
-      .startAngle(0);
+      .startAngle(Math.PI);
 
     var backgroundArc = group.append('svg:path')
       .attr({
-        d : arc({endAngle : tau}),
+        d : arc({endAngle : tau + Math.PI}),
         fill : colours.grey[8]
       });
 
@@ -56,7 +56,7 @@ export default class StateInfobox extends React.Component {
         .attr({
           fontSize : 12,
           textAnchor : 'middle',
-          y : this.props.arc2012radius - texts.length * 6 - 4
+          y : this.props.arc2012radius - texts.length * 6
         });
       texts.forEach(text => {
           disclaimer.append('svg:tspan')
@@ -64,8 +64,8 @@ export default class StateInfobox extends React.Component {
           .attr({ x : this.props.arc2012radius, dy : 12 });
         });
     } else {
-      var obamaAngle = tau * -1 * obamaShare;
-      var romneyAngle = tau * romneyShare;
+      var obamaAngle = Math.PI + tau * obamaShare;
+      var romneyAngle = Math.PI + tau * -1 * romneyShare;
       var pctFormat = d3.format('.2p');
 
       var obamaArc = group.append('svg:path')
@@ -111,8 +111,8 @@ export default class StateInfobox extends React.Component {
 
     return (<svg height={(radius + arcPad) * 2} width={radius * 2}>
       {el.toReact()}
-      <text x={radius - 4} y="11" className="outside-label" fill={colours.usParty.dem} textAnchor="end">Obama</text>
-      <text x={radius + 2} y="11" className="outside-label" fill={colours.usParty.gop}>Romney</text>
+      <text x={radius - 4} y={(radius + arcPad) * 2 - 1} className="outside-label" fill={colours.usParty.dem} textAnchor="end">Obama</text>
+      <text x={radius + 2} y={(radius + arcPad) * 2 - 1} className="outside-label" fill={colours.usParty.gop}>Romney</text>
     </svg>);
   }
   get delegateCount() {
@@ -120,7 +120,7 @@ export default class StateInfobox extends React.Component {
     var rectHeight = this.props.delegateHeight;
 
     var innerHeight = rectHeight - 14;
-    var largeFontSize = innerHeight * 0.67;
+    var largeFontSize = innerHeight * 0.5;
 
     var header = this.props.state.state === "SPD" ? 'Superdelegates' : 'Delegates';
 
@@ -128,28 +128,28 @@ export default class StateInfobox extends React.Component {
       <text x={rectWidth / 2} y={innerHeight - 8} textAnchor='middle' fontSize={innerHeight * 0.95} className="delegate-count">{this.props.state.unpledged}</text>
     </g>) :
       (<g transform="translate(0, 14)" key="fullContents">
-          <text x="3" y={largeFontSize * 0.8} fontSize="12">
+          <text x="3" y={largeFontSize * 0.8} fontSize="12" fill={colours.grey[3]}>
             <tspan className="delegate-count" fontSize={largeFontSize}>{this.props.state.pledged}</tspan>
             <tspan> </tspan>
             <tspan className="delegate-label" y="12">Pledged*</tspan>
           </text>
-          <text x={rectWidth - 4} y={innerHeight - 3} fontSize="12" textAnchor="end">
+          <text x={rectWidth - 4} y={innerHeight - 3} fontSize="12" textAnchor="end" fill={colours.grey[3]}>
             <tspan className="delegate-label">{this.props.state.party === DEMOCRAT ? 'Superdel.' : 'Unpledged'}</tspan>
             <tspan> </tspan>
             <tspan fontSize={largeFontSize} className="delegate-count">{this.props.state.unpledged}</tspan>
           </text>
           <path stroke="black" strokeWeight="0.5" fill="none"
-          d={`M 0 ${innerHeight * 0.63}
-            C ${rectWidth * 0.25} ${innerHeight * 0.63} ${rectWidth * 0.3} ${innerHeight * 0.63} ${rectWidth * 0.5} ${innerHeight * 0.5}
-            C ${rectWidth * 0.7} ${innerHeight * 0.37} ${rectWidth * 0.75} ${innerHeight * 0.37} ${rectWidth} ${innerHeight * 0.37}`} />
+          d={`M 0 ${innerHeight * 0.63} L ${rectWidth} ${innerHeight * 0.37}`} />
         </g>);
 
+        // C ${rectWidth * 0.25} ${innerHeight * 0.63} ${rectWidth * 0.3} ${innerHeight * 0.63} ${rectWidth * 0.5} ${innerHeight * 0.5}
+        // C ${rectWidth * 0.7} ${innerHeight * 0.37} ${rectWidth * 0.75} ${innerHeight * 0.37} ${rectWidth} ${innerHeight * 0.37}`
     return (<svg height={rectHeight + 2} width={rectWidth + 2}>
       <g transform="translate(1,1)">
         <rect height={rectHeight} width={rectWidth} fill="white" />
         <rect height="14" width={rectWidth} fill={colours.grey[5]} />
         <rect height={rectHeight} width={rectWidth} fill="none" stroke="black" strokeWeight="0.5" />
-        <text x="3" y="11.5" fontSize="12" fill="white" className="box-label">{header}</text>
+        <text x="3" y="11.5" fontSize="12" fill="white" className="delegate-box-label box-label">{header}</text>
 
         {contents}
       </g>
@@ -178,8 +178,10 @@ export default class StateInfobox extends React.Component {
       state_pct : this.props.state[`${c.key}_pct`],
       state_del : this.props.state[`${c.key}_del`]
     }))
-      .filter(c => c.state_pct !== "")
+      .filter(c => c.state_pct > 0)
       .sort((a,b) => b.state_pct - a.state_pct);
+
+    console.log(stateCandidates);
 
     // if there are no results, stop here and show nothing
     if(stateCandidates.length === 0) { return null; }
@@ -275,7 +277,7 @@ export default class StateInfobox extends React.Component {
 
     var state = this.props.state;
     state.date = new Date(state.date);
-    var width = Math.max(this.props.squareSize * 2, this.props.arc2012radius);
+    var width = Math.max(this.props.squareSize * 2, this.props.arc2012radius * 2);
 
     var containerStyle = {
       width : width

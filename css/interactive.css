@@ -77,7 +77,11 @@
   justify-content: flex-start;
 
   svg {
-    margin-bottom: 2px;
+    margin-bottom: 3px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
 }
@@ -97,9 +101,11 @@
   text-transform: uppercase;
 }
 .box-label {
-  font-weight: bold;
   fill: white;
   text-transform: uppercase;
+}
+.calendar-month-label {
+  font-weight: bold;
 }
 .delegate-count,
 .candidate-delegate-count,
@@ -108,7 +114,7 @@
   font-weight: bold;
 }
 .delegate-count {
-  letter-spacing: -2px;
+  letter-spacing: -1px;
 }
 .delegate-label {
   /*text-transform: uppercase;*/
