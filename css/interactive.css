@@ -98,6 +98,10 @@
   font-family: var(--serif-stack);
   font-size: 14px; line-height: 1.3;
   margin-top: 0.5em;
+
+  &:first-child {
+    margin-top: 30px;
+  }
 }
 .state-info-pie-label {
   font-size: 13px;
