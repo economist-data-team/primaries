@@ -12,6 +12,8 @@ var stateInfoDate = d3.time.format('%B %e');
 var stateInfoMonth = d3.time.format('%b');
 var tau = Math.PI * 2;
 
+var arcPad = 6;
+
 export default class StateInfobox extends React.Component {
   static get defaultProps() {
     return {
@@ -32,7 +34,7 @@ export default class StateInfobox extends React.Component {
     var sel = d3.select(el);
 
     var group = sel.append('svg:g')
-      .attr('transform', generateTranslateString(radius, radius + 0));
+      .attr('transform', generateTranslateString(radius, radius + arcPad * 2));
 
     var arc = d3.svg.arc()
       .innerRadius(radius * 0.33)
@@ -107,10 +109,10 @@ export default class StateInfobox extends React.Component {
       });
     }
 
-    return (<svg height={radius * 2} width={radius * 2}>
+    return (<svg height={(radius + arcPad) * 2} width={radius * 2}>
       {el.toReact()}
-      <text x={1 * radius/2} y="15" className="outside-label" fill="black" textAnchor="middle">Obama</text>
-      <text x={3 * radius/2} y="15" className="outside-label" fill="black" textAnchor="middle">Romney</text>
+      <text x={radius - 4} y="11" className="outside-label" fill={colours.usParty.dem} textAnchor="end">Obama</text>
+      <text x={radius + 2} y="11" className="outside-label" fill={colours.usParty.gop}>Romney</text>
     </svg>);
   }
   get delegateCount() {
@@ -273,24 +275,21 @@ export default class StateInfobox extends React.Component {
 
     var state = this.props.state;
     state.date = new Date(state.date);
-    var width = Math.max(this.props.squareSize * 2, this.arc2012radius);
+    var width = Math.max(this.props.squareSize * 2, this.props.arc2012radius);
 
     var containerStyle = {
       width : width
     };
 
-
     var textBlock = state.text ? (<p className="state-info-text">{state.text}</p>) : null;
-    return(<div className="state-info" style={containerStyle}>
+    return(<div className="state-info">
       <div className="state-info-left">
         <h4>{state.state_full_name}</h4>
         {this.resultsChart}
         {textBlock}
       </div>
-      <div className="state-info-box">
-        <div className="side-boxes">
-          {this.calendarPage}
-        </div>
+      <div className="state-info-box" style={containerStyle}>
+        {this.calendarPage}
         {this.delegateCount}
         {this.pie2012}
       </div>

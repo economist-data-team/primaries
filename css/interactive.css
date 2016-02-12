@@ -71,13 +71,15 @@
 }
 .state-info-box {
   margin-left: 5px;
-}
-.side-boxes {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  /*justify-content: flex-end;*/
-  margin-bottom: 5px;
+  justify-content: flex-start;
+
+  svg {
+    margin-bottom: 2px;
+  }
+
 }
 .state-info-text {
   font-family: var(--serif-stack);
