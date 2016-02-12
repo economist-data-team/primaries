@@ -63,14 +63,90 @@
   max-width: 60%;
   position: absolute;
   right: 15px;
-  bottom: 75px;
+  bottom: 35px;
   border: 1px solid var(--grey-5);
   padding: 3px 5px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
 }
+.combine-top-box {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: -25px;
+}
+.right-group {
+  display: flex;
+  align-items: flex-start;
+
+  svg {
+    margin-left: 4px;
+  }
+}
+.combine-bottom-box {
+  display: flex;
+}
+.state-info-box {
+  margin-top: 30px;
+  margin-left: 10px;
+}
+.state-info-box-title {
+  font-size: 18px;
+}
+
 .state-info-text {
   font-family: var(--serif-stack);
-  font-size: 15px; line-height: 1.3;
+  font-size: 14px; line-height: 1.3;
   margin-top: 0.5em;
+
+  &:first-child {
+    margin-top: 30px;
+  }
+}
+.state-info-pie-label {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: -0.5px;
+}
+.outside-label {
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.box-label {
+  fill: white;
+  text-transform: uppercase;
+}
+.calendar-month-label {
+  font-weight: bold;
+}
+.delegate-count,
+.candidate-delegate-count,
+.candidate-bar-percent,
+.calendar-day-label {
+  font-weight: bold;
+}
+.delegate-count {
+  letter-spacing: -1px;
+}
+.delegate-label {
+  /*text-transform: uppercase;*/
+}
+.candidate-delegate-count {
+  letter-spacing: -0.5px;
+}
+.candidate-delegate-count,
+.candidate-delegate-label {
+  font-style: italic;
+}
+
+.candidate-bar-axis .tick line {
+  stroke: white;
+  stroke-width: 2;
+  opacity: 0.6;
+}
+.candidate-bar-axis .tick text {
+  font-size: 13px;
 }
 
 .primary-calendar {

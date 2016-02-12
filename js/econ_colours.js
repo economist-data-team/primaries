@@ -48,7 +48,11 @@ var colours = {
   ],
   yellow : [
     '#f9c563'
-  ]
+  ],
+  usParty : {
+    'gop' : '#e98f73',
+    'dem' : '#00a4db'
+  }
 };
 
 export default colours;

@@ -85,9 +85,13 @@
     }
   }
 
-  .source, .note {
+  .source, .notes {
     font-size: 14px;
     padding: 5px 10px;
+  }
+  .notes {
+    max-width: 60%;
+    float: right;
   }
 
   .tooltip-outer {

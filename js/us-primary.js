@@ -10,6 +10,7 @@ import DateLabel from './date-label.js';
 import MonthGroup from './month-group.js';
 import PrimaryGraph from './us-primary-graph.js';
 import USPrimaryElement from './us-primary-element.js';
+import StateInfoWindow from './us-primaries-state-infowindow.js';
 
 import BoundedSVG from './bounded-svg.js';
 
@@ -242,10 +243,10 @@ export default class USPrimaries extends BoundedSVG {
     };
 
     var dateLabelProps = {
-      date : this.props.focusPrimary ? this.props.focusPrimary.date : null,
+      date : this.props.focusPrimary ? new Date(this.props.focusPrimary.date) : null,
       position: this.props.focusPrimary ?
         [
-          scale(primaryDateComparisons.indexOf(this.props.focusPrimary.date.getTime())),
+          scale(primaryDateComparisons.indexOf(new Date(this.props.focusPrimary.date).getTime())),
           this.props.showPrimaryGraph ? 160 : 10
         ] : [0,0]
     };
@@ -254,15 +255,25 @@ export default class USPrimaries extends BoundedSVG {
       (<PrimaryGraph {...primaryGraphProps} />) :
       null;
 
+    var stateInfoWindowProps = {
+      candidates : candidateTallies,
+      state : this.props.focusPrimary
+    };
+
     var groupTransform = `translate(0, ${primaryGraphHeight})`;
-    return(<g>
-      {primaryGraph}
-      <g transform={groupTransform} className="primary-calendar">
-        <MonthGroup {...monthGroupProps} />
-        {stateElements}
-      </g>
-      <DateLabel {...dateLabelProps} />
-      <PrimariesKey dim={this.props.rectSize} fullHeight={this.props.height} starPath={STAR_PATH} />
-    </g>);
+    return(<div>
+      <svg width="595" height={this.props.height}>
+        <g>
+          {primaryGraph}
+          <g transform={groupTransform} className="primary-calendar">
+            <MonthGroup {...monthGroupProps} />
+            {stateElements}
+          </g>
+          <DateLabel {...dateLabelProps} />
+          <PrimariesKey dim={this.props.rectSize} fullHeight={this.props.height} starPath={STAR_PATH} />
+        </g>
+      </svg>
+      <StateInfoWindow {...stateInfoWindowProps} />
+    </div>);
   }
 }

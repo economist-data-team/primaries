@@ -101,13 +101,16 @@ function _translateCSS(strings, ...values) {
 /**
  * generates a translation string for transforms
  *
- * @param {Number}  x   x-coordinate to translate to
- * @param {Number}  y   y-coordinate to translate to
+ * @param {Number|Array}  x   x-coordinate to translate to, or [x,y]
+ * @param {Number|Boolean}  y   y-coordinate to translate to, or css
  * @param {Boolean} css is it a CSS transform? (adds 'px')
  *
  * @return {String}     the translate string to add to a transform
  */
 export function generateTranslateString(x, y, css) {
+  if(x.push) {
+    css = y, y = x[1], x = x[0];
+  }
   let translateString = `translate(${x}, ${y})`;
   let tagged = _translateCSS`translate(${x}, ${y})`;
   return css ? tagged : translateString;
