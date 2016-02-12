@@ -15,13 +15,17 @@ var tau = Math.PI * 2;
 export default class StateInfobox extends React.Component {
   static get defaultProps() {
     return {
-      squareSize : 40,
-      arc2012radius : 45,
+      squareSize : 41,
+      arc2012radius : 46,
       delegateHeight : 54,
       state : null
     };
   }
   get pie2012() {
+    if(this.props.state.state === 'SPD') {
+      return null;
+    }
+
     var radius = this.props.arc2012radius;
 
     var el = RFD.createElement('svg')
@@ -45,16 +49,30 @@ export default class StateInfobox extends React.Component {
     var obamaShare = this.props.state.obama2012 / 100;
     var romneyShare = this.props.state.romney2012 / 100;
 
-    var obamaAngle = tau * -1 * obamaShare;
-    var romneyAngle = tau * romneyShare;
-    var pctFormat = d3.format('.2p');
+    if(obamaShare === 0 && romneyShare === 0) {
+      var texts = ['Does not','hold presidential', 'elections, only', 'party primaries'];
+      var disclaimer = sel.append('svg:text')
+        .attr({
+          fontSize : 12,
+          textAnchor : 'middle',
+          y : this.props.arc2012radius - texts.length * 6 - 4
+        });
+      texts.forEach(text => {
+          disclaimer.append('svg:tspan')
+          .text(text)
+          .attr({ x : this.props.arc2012radius, dy : 12 });
+        });
+    } else {
+      var obamaAngle = tau * -1 * obamaShare;
+      var romneyAngle = tau * romneyShare;
+      var pctFormat = d3.format('.2p');
 
-    var obamaArc = group.append('svg:path')
+      var obamaArc = group.append('svg:path')
       .attr({
         d : arc({endAngle : obamaAngle}),
         fill : colours.usParty.dem
       });
-    var obamaLabel = group.append('svg:text')
+      var obamaLabel = group.append('svg:text')
       .text(pctFormat(obamaShare))
       .classed('state-info-wedge-label', true)
       .attr({
@@ -65,12 +83,12 @@ export default class StateInfobox extends React.Component {
         }))
       });
 
-    var romneyArc = group.append('svg:path')
+      var romneyArc = group.append('svg:path')
       .attr({
         d : arc({endAngle : romneyAngle}),
         fill : colours.usParty.gop
       });
-    var romneyLabel = group.append('svg:text')
+      var romneyLabel = group.append('svg:text')
       .text(pctFormat(romneyShare))
       .classed('state-info-wedge-label', true)
       .attr({
@@ -79,7 +97,7 @@ export default class StateInfobox extends React.Component {
         transform : generateTranslateString(arc.centroid({endAngle : romneyAngle}))
       });
 
-    var title = group.append('svg:text')
+      var title = group.append('svg:text')
       .text('2012')
       .classed('state-info-pie-label', true)
       .attr({
@@ -88,6 +106,7 @@ export default class StateInfobox extends React.Component {
         y : 4,
         fontSize : 12
       });
+    }
 
     return el.toReact();
   }
@@ -98,29 +117,36 @@ export default class StateInfobox extends React.Component {
     var innerHeight = rectHeight - 14;
     var largeFontSize = innerHeight * 0.67;
 
+    var header = this.props.state.state === "SPD" ? 'Superdelegates' : 'Delegates';
+
+    var contents = this.props.state.state === "SPD" ? (<g transform="translate(0,14)" key="superdelContents">
+      <text x={rectWidth / 2} y={innerHeight - 8} textAnchor='middle' fontSize={innerHeight * 0.95} className="delegate-count">{this.props.state.unpledged}</text>
+    </g>) :
+      (<g transform="translate(0, 14)" key="fullContents">
+          <text x="3" y={largeFontSize * 0.8} fontSize="12">
+            <tspan className="delegate-count" fontSize={largeFontSize}>{this.props.state.pledged}</tspan>
+            <tspan> </tspan>
+            <tspan className="delegate-label" y="12">Pledged*</tspan>
+          </text>
+          <text x={rectWidth - 4} y={innerHeight - 3} fontSize="12" textAnchor="end">
+            <tspan className="delegate-label">{this.props.state.party === DEMOCRAT ? 'Superdel.' : 'Unpledged'}</tspan>
+            <tspan> </tspan>
+            <tspan fontSize={largeFontSize} className="delegate-count">{this.props.state.unpledged}</tspan>
+          </text>
+          <path stroke="black" strokeWeight="0.5" fill="none"
+          d={`M 0 ${innerHeight * 0.63}
+            C ${rectWidth * 0.25} ${innerHeight * 0.63} ${rectWidth * 0.3} ${innerHeight * 0.63} ${rectWidth * 0.5} ${innerHeight * 0.5}
+            C ${rectWidth * 0.7} ${innerHeight * 0.37} ${rectWidth * 0.75} ${innerHeight * 0.37} ${rectWidth} ${innerHeight * 0.37}`} />
+        </g>);
+
     return (<svg height={rectHeight + 2} width={rectWidth + 2}>
       <g transform="translate(1,1)">
         <rect height={rectHeight} width={rectWidth} fill="white" />
         <rect height="14" width={rectWidth} fill={colours.grey[5]} />
         <rect height={rectHeight} width={rectWidth} fill="none" stroke="black" strokeWeight="0.5" />
-        <text x="3" y="11.5" fontSize="12" fill="white" className="box-label">Delegates</text>
+        <text x="3" y="11.5" fontSize="12" fill="white" className="box-label">{header}</text>
 
-        <g transform="translate(0, 14)">
-        <text x="3" y={largeFontSize * 0.8} fontSize="12">
-          <tspan className="delegate-count" fontSize={largeFontSize}>{this.props.state.pledged}</tspan>
-          <tspan> </tspan>
-          <tspan className="delegate-label" y="12">Pledged*</tspan>
-        </text>
-        <text x={rectWidth - 4} y={innerHeight - 3} fontSize="12" textAnchor="end">
-          <tspan className="delegate-label">{this.props.state.party === DEMOCRAT ? 'Superdel.' : 'Unpledged'}</tspan>
-          <tspan> </tspan>
-          <tspan fontSize={largeFontSize} className="delegate-count">{this.props.state.unpledged}</tspan>
-        </text>
-        <path stroke="black" strokeWeight="0.5" fill="none"
-          d={`M 0 ${innerHeight * 0.63}
-              C ${rectWidth * 0.25} ${innerHeight * 0.63} ${rectWidth * 0.3} ${innerHeight * 0.63} ${rectWidth * 0.5} ${innerHeight * 0.5}
-              C ${rectWidth * 0.7} ${innerHeight * 0.37} ${rectWidth * 0.75} ${innerHeight * 0.37} ${rectWidth} ${innerHeight * 0.37}`} />
-        </g>
+        {contents}
       </g>
     </svg>);
     // L ${rectWidth * 0.35} ${rectHeight - 14}
