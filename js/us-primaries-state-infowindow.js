@@ -280,7 +280,8 @@ export default class StateInfobox extends React.Component {
     var width = Math.max(this.props.squareSize * 2, this.props.arc2012radius * 2);
 
     var containerStyle = {
-      width : width
+      width : width,
+      minWidth : width
     };
 
     var textBlock = state.text ? (<p className="state-info-text">{state.text}</p>) : null;

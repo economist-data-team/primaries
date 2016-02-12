@@ -16,6 +16,7 @@ export function updateParty(data) {
     data
   };
 }
+window.focusPrimary = focusPrimary;
 
 export function focusPrimary(data) {
   return {
