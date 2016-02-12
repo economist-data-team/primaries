@@ -4,6 +4,7 @@ import RFD from 'react-faux-dom';
 import colours from './econ_colours.js';
 import { Im, generateTranslateString, generateRectPolygonString,
   addDOMProperty } from './utilities.js';
+import { DEMOCRAT, REPUBLICAN } from './us-primary.js';
 
 addDOMProperty('strokeWeight', 'stroke-weight');
 
@@ -16,6 +17,7 @@ export default class StateInfobox extends React.Component {
     return {
       squareSize : 40,
       arc2012radius : 45,
+      delegateHeight : 54,
       state : null
     };
   }
@@ -90,15 +92,40 @@ export default class StateInfobox extends React.Component {
     return el.toReact();
   }
   get delegateCount() {
-    var squareSize = this.props.squareSize;
-    return (<svg height={squareSize + 2} width={squareSize + 2}>
+    var rectWidth = this.props.arc2012radius * 2 - 2;
+    var rectHeight = this.props.delegateHeight;
+
+    var innerHeight = rectHeight - 14;
+    var largeFontSize = innerHeight * 0.67;
+
+    return (<svg height={rectHeight + 2} width={rectWidth + 2}>
       <g transform="translate(1,1)">
-        <rect height={squareSize} width={squareSize} fill="white" />
-        <rect height={squareSize} width={squareSize} fill="none" stroke="black" strokeWeight="0.5" />
-        <text x={squareSize / 2} y={squareSize * 0.6} fontSize={squareSize * 0.67} textAnchor="middle" className="delegate-count">{this.props.state.pledged}</text>
-        <text x={squareSize / 2} y={squareSize - 2} fontSize="12" textAnchor="middle" className="delegate-label">Dels*</text>
+        <rect height={rectHeight} width={rectWidth} fill="white" />
+        <rect height="14" width={rectWidth} fill={colours.grey[5]} />
+        <rect height={rectHeight} width={rectWidth} fill="none" stroke="black" strokeWeight="0.5" />
+        <text x="3" y="11.5" fontSize="12" fill="white" className="box-label">Delegates</text>
+
+        <g transform="translate(0, 14)">
+        <text x="3" y={largeFontSize * 0.8} fontSize="12">
+          <tspan className="delegate-count" fontSize={largeFontSize}>{this.props.state.pledged}</tspan>
+          <tspan> </tspan>
+          <tspan className="delegate-label" y="12">Pledged*</tspan>
+        </text>
+        <text x={rectWidth - 4} y={innerHeight - 3} fontSize="12" textAnchor="end">
+          <tspan className="delegate-label">{this.props.state.party === DEMOCRAT ? 'Superdel.' : 'Unpledged'}</tspan>
+          <tspan> </tspan>
+          <tspan fontSize={largeFontSize} className="delegate-count">{this.props.state.unpledged}</tspan>
+        </text>
+        <path stroke="black" strokeWeight="0.5" fill="none"
+          d={`M 0 ${innerHeight * 0.63}
+              C ${rectWidth * 0.25} ${innerHeight * 0.63} ${rectWidth * 0.3} ${innerHeight * 0.63} ${rectWidth * 0.5} ${innerHeight * 0.5}
+              C ${rectWidth * 0.7} ${innerHeight * 0.37} ${rectWidth * 0.75} ${innerHeight * 0.37} ${rectWidth} ${innerHeight * 0.37}`} />
+        </g>
       </g>
     </svg>);
+    // L ${rectWidth * 0.35} ${rectHeight - 14}
+    // L ${rectWidth * 0.65} 31
+    // L ${rectWidth} 31
   }
   get calendarPage() {
     if(this.props.state.state === 'SPD') { return null; }
@@ -110,7 +137,7 @@ export default class StateInfobox extends React.Component {
         <rect height={squareSize} width={squareSize} fill="white"/>
         <rect height="14" width={squareSize} fill={colours.red[1]} />
         <rect height={squareSize} width={squareSize} fill="none" stroke="black" strokeWeight="0.5"/>
-        <text x={squareSize/2} y="11" fontSize="12" textAnchor="middle" className="calendar-month-label">{stateInfoMonth(date)}</text>
+        <text x={squareSize/2} y="11.5" fontSize="12" textAnchor="middle" className="calendar-month-label box-label">{stateInfoMonth(date)}</text>
         <text x={squareSize/2} y={squareSize * 0.9} fontSize={squareSize * 0.67} textAnchor="middle" className="calendar-day-label">{date.getDate()}</text>
       </g>
     </svg>);
@@ -230,9 +257,9 @@ export default class StateInfobox extends React.Component {
       </div>
       <div className="state-info-box">
         <div className="side-boxes">
-          {this.delegateCount}
           {this.calendarPage}
         </div>
+        {this.delegateCount}
         {this.pie2012}
       </div>
     </div>);

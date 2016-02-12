@@ -74,7 +74,7 @@
 }
 .side-boxes {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 5px;
 }
 .state-info-text {
@@ -87,7 +87,7 @@
   font-weight: bold;
   letter-spacing: -0.5px;
 }
-.calendar-month-label {
+.box-label {
   font-weight: bold;
   fill: white;
   text-transform: uppercase;
@@ -100,6 +100,9 @@
 }
 .delegate-count {
   letter-spacing: -2px;
+}
+.delegate-label {
+  /*text-transform: uppercase;*/
 }
 .candidate-delegate-count {
   letter-spacing: -0.5px;
