@@ -150,7 +150,6 @@ export default class StateInfobox extends React.Component {
       .filter(c => c.state_pct !== "")
       .sort((a,b) => b.state_pct - a.state_pct);
 
-    console.log(stateCandidates);
     // if there are no results, stop here and show nothing
     if(stateCandidates.length === 0) { return null; }
 
@@ -245,11 +244,15 @@ export default class StateInfobox extends React.Component {
 
     var state = this.props.state;
     state.date = new Date(state.date);
-    var block = state.state === 'SPD' ? null : (<div>
-      <div>Delegates determined by election: {state.pledged}</div>
-    </div>);
+    var width = Math.max(this.props.squareSize * 2, this.arc2012radius);
+
+    var containerStyle = {
+      width : width
+    };
+
+
     var textBlock = state.text ? (<p className="state-info-text">{state.text}</p>) : null;
-    return(<div className="state-info">
+    return(<div className="state-info" style={containerStyle}>
       <div className="state-info-left">
         <h4>{state.state_full_name}</h4>
         {this.resultsChart}
