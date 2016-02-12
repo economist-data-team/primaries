@@ -28,9 +28,8 @@ export default class StateInfobox extends React.Component {
 
     var radius = this.props.arc2012radius;
 
-    var el = RFD.createElement('svg')
+    var el = RFD.createElement('g')
     var sel = d3.select(el);
-    sel.attr({ height : radius * 2 + 0, width : radius * 2});
 
     var group = sel.append('svg:g')
       .attr('transform', generateTranslateString(radius, radius + 0));
@@ -108,7 +107,11 @@ export default class StateInfobox extends React.Component {
       });
     }
 
-    return el.toReact();
+    return (<svg height={radius * 2} width={radius * 2}>
+      {el.toReact()}
+      <text x={1 * radius/2} y="15" className="outside-label" fill="black" textAnchor="middle">Obama</text>
+      <text x={3 * radius/2} y="15" className="outside-label" fill="black" textAnchor="middle">Romney</text>
+    </svg>);
   }
   get delegateCount() {
     var rectWidth = this.props.arc2012radius * 2 - 2;

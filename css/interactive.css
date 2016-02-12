@@ -74,7 +74,9 @@
 }
 .side-boxes {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
+  /*justify-content: flex-end;*/
   margin-bottom: 5px;
 }
 .state-info-text {
@@ -86,6 +88,11 @@
   font-size: 13px;
   font-weight: bold;
   letter-spacing: -0.5px;
+}
+.outside-label {
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 .box-label {
   font-weight: bold;
