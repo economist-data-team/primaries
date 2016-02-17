@@ -13,6 +13,7 @@ var stateInfoMonth = d3.time.format('%b');
 var tau = Math.PI * 2;
 
 var arcPad = 6;
+var pieLabelOffset = 13;
 
 export default class StateInfobox extends React.Component {
   static get defaultProps() {
@@ -34,7 +35,7 @@ export default class StateInfobox extends React.Component {
     var sel = d3.select(el);
 
     var group = sel.append('svg:g')
-      .attr('transform', generateTranslateString(radius, radius));
+      .attr('transform', generateTranslateString(radius, radius + 12));
 
     var arc = d3.svg.arc()
       .innerRadius(radius * 0.33)
@@ -109,10 +110,11 @@ export default class StateInfobox extends React.Component {
       });
     }
 
-    return (<svg height={(radius + arcPad) * 2} width={radius * 2}>
+    return (<svg height={(radius + arcPad) * 2 + pieLabelOffset} width={radius * 2}>
+      <text x={radius} y={pieLabelOffset - 2} className="outside-label" textAnchor="middle">General election</text>
       {el.toReact()}
-      <text x={radius - 4} y={(radius + arcPad) * 2 - 1} className="outside-label" fill={colours.usParty.dem} textAnchor="end">Obama</text>
-      <text x={radius + 2} y={(radius + arcPad) * 2 - 1} className="outside-label" fill={colours.usParty.gop}>Romney</text>
+      <text x={radius - 4} y={(radius + arcPad) * 2 - 1 + pieLabelOffset} className="outside-label" fill={colours.usParty.dem} textAnchor="end">Obama</text>
+      <text x={radius + 2} y={(radius + arcPad) * 2 - 1 + pieLabelOffset} className="outside-label" fill={colours.usParty.gop}>Romney</text>
     </svg>);
   }
   get delegateCount() {
