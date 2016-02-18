@@ -111,7 +111,7 @@ export default class StateInfobox extends React.Component {
     }
 
     return (<svg height={(radius + arcPad) * 2 + pieLabelOffset} width={radius * 2}>
-      <text x={radius} y={pieLabelOffset - 2} className="outside-label" textAnchor="middle">General election</text>
+      <text x={radius} y={pieLabelOffset - 2} className="outside-label top-outside-label" textAnchor="middle">General election</text>
       {el.toReact()}
       <text x={radius - 4} y={(radius + arcPad) * 2 - 1 + pieLabelOffset} className="outside-label" fill={colours.usParty.dem} textAnchor="end">Obama</text>
       <text x={radius + 2} y={(radius + arcPad) * 2 - 1 + pieLabelOffset} className="outside-label" fill={colours.usParty.gop}>Romney</text>

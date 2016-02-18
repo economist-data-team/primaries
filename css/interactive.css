@@ -113,6 +113,9 @@
   font-weight: bold;
   text-transform: uppercase;
 }
+.top-outside-label {
+  letter-spacing: -0.33px;
+}
 .box-label {
   fill: white;
   text-transform: uppercase;
