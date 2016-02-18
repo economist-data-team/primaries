@@ -75,10 +75,14 @@ export function isNumeric(n) {
  *
  * @param {*} d - a list whose items should be evaluated for numericity
  */
+var percentMatcher = /(.+)%$/;
 export function parseNumerics(d) {
   // var fn = d instanceof Array ? 'map' : 'mapValues';
   var fn = function(v) {
-    return isNumeric(v) ? parseFloat(v) : v;
+    var match = v && v.match && v.match(percentMatcher);
+    return isNumeric(v) ? parseFloat(v) :
+      // now handle percents...
+      match && isNumeric(match[1]) ? parseFloat(match[1]) : v;
   }
   return d instanceof Array ? d.map(fn) : mapValues(d, fn);
 }
