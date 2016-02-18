@@ -183,8 +183,6 @@ export default class StateInfobox extends React.Component {
       .filter(c => c.state_pct > 0)
       .sort((a,b) => b.state_pct - a.state_pct);
 
-    console.log(stateCandidates);
-
     // if there are no results, stop here and show nothing
     if(stateCandidates.length === 0) { return null; }
 
