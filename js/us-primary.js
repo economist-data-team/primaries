@@ -43,7 +43,7 @@ export const CANDIDATES = [
   { party : DEMOCRAT, key : 'omalley', displaySurname : 'O’Malley', name : 'Martin O’Malley', ended : true },
   { party : DEMOCRAT, key : 'sanders', displaySurname : 'Sanders', name : 'Bernie Sanders' },
 
-  { party : REPUBLICAN, key : 'bush', displaySurname : 'Bush', name : 'Jeb Bush' },
+  { party : REPUBLICAN, key : 'bush', displaySurname : 'Bush', name : 'Jeb Bush', ended : true },
   { party : REPUBLICAN, key : 'carson', displaySurname : 'Carson', name : 'Ben Carson' },
   { party : REPUBLICAN, key : 'christie', displaySurname : 'Christie', name : 'Chris Christie' },
   { party : REPUBLICAN, key : 'cruz', displaySurname : 'Cruz', name : 'Ted Cruz' },
