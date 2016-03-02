@@ -79,19 +79,20 @@ class Chart extends ChartContainer {
 
     var notes = [<span className="note">*Bound by primary result</span>];
 
+    // <div className="intro-text">
+    //   <p>Beginning with Iowa on February 1st, use this calendar to follow
+    //   the Democratic and Republican primaries and caucasus and track each
+    //   party’s candidate of choice for the presidency state-by-state.</p>
+    //   <p>We’ll update the delegate count after each election as results
+    //   are declared, through “Super Tuesday” on March 1st and beyond to the
+    //   final Democratic nomination in Washington, DC, on June 14th.</p>
+    // </div>
+
     return(
       <div className='chart-container'>
         <Header title="2016 US primary-elections calendar" subtitle="Delegate support, to date"/>
         <div className="party-toggle-container">
           <ToggleBar {...toggleProps} />
-        </div>
-        <div className="intro-text">
-          <p>Beginning with Iowa on February 1st, use this calendar to follow
-          the Democratic and Republican primaries and caucasus and track each
-          party’s candidate of choice for the presidency state-by-state.</p>
-          <p>We’ll update the delegate count after each election as results
-          are declared, through “Super Tuesday” on March 1st and beyond to the
-          final Democratic nomination in Washington, DC, on June 14th.</p>
         </div>
         <USPrimaries {...primaryProps} />
         <Footer sources={['RealClearPolitics', 'The Green Papers', 'Ballotpedia', 'Associated Press']}

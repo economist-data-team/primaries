@@ -10,6 +10,8 @@ var canvas = document.createElement('canvas');
 var ctx = canvas.getContext('2d');
 ctx.font = 'bold 13px Officina, Calibri, Arial, sans-serif, Lucida Grande, Arial Unicode MS';
 
+var commaFormatNumber = d3.format(',');
+
 var primaryGraphPadding = 5;
 export default class PrimaryGraph extends BoundedSVG {
   constructor(...args) {
@@ -68,6 +70,8 @@ export default class PrimaryGraph extends BoundedSVG {
     var countTarget = cutoffCandidate.delegates[numPrimaries - 1];
     // var labeledCandidates = this.props.candidates.slice(0,6);
     var labeledCandidates = this.props.candidates.filter(
+      c => !c.ended
+    ).filter(
       c => c.delegates[numPrimaries - 1] >= countTarget
     );
     if(labeledCandidates.length > 7) {
@@ -134,9 +138,9 @@ export default class PrimaryGraph extends BoundedSVG {
       .linkDistance(0)
       .linkStrength(1)
       .gravity(0)
-      .chargeDistance(40)
-      .charge(d => d.anchor ? 0 : -90)
-      .friction(0.8);
+      .chargeDistance(60)
+      .charge(d => d.anchor ? 0 : -120)
+      .friction(0.65);
 
     force.nodes(nodes).links(links).start();
     force.on('tick', d => {
@@ -258,9 +262,15 @@ export default class PrimaryGraph extends BoundedSVG {
           });
       });
     winLineJoin.exit().remove();
-    winLineJoin.attr({
-      transform : n => generateTranslateString(0, yScale(n))
-    });
+    winLineJoin
+      .attr({
+        transform : n => generateTranslateString(0, yScale(n))
+      })
+      .each(function() {
+        var sel = d3.select(this);
+        sel.select('.win-line-label')
+          .text(n => `Needed to win: ${commaFormatNumber(n)} delegates`);
+      });
 
     return el.toReact();
   }

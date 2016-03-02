@@ -43,17 +43,17 @@ export const CANDIDATES = [
   { party : DEMOCRAT, key : 'omalley', displaySurname : 'O’Malley', name : 'Martin O’Malley', ended : true },
   { party : DEMOCRAT, key : 'sanders', displaySurname : 'Sanders', name : 'Bernie Sanders' },
 
-  { party : REPUBLICAN, key : 'bush', displaySurname : 'Bush', name : 'Jeb Bush' },
+  { party : REPUBLICAN, key : 'bush', displaySurname : 'Bush', name : 'Jeb Bush', ended : true },
   { party : REPUBLICAN, key : 'carson', displaySurname : 'Carson', name : 'Ben Carson' },
-  { party : REPUBLICAN, key : 'christie', displaySurname : 'Christie', name : 'Chris Christie' },
+  { party : REPUBLICAN, key : 'christie', displaySurname : 'Christie', name : 'Chris Christie', ended : true },
   { party : REPUBLICAN, key : 'cruz', displaySurname : 'Cruz', name : 'Ted Cruz' },
-  { party : REPUBLICAN, key : 'fiorina', displaySurname : 'Fiorina', name : 'Carly Fiorina' },
-  { party : REPUBLICAN, key : 'gilmore', displaySurname : 'Gilmore', name : 'Jim Gilmore' },
+  { party : REPUBLICAN, key : 'fiorina', displaySurname : 'Fiorina', name : 'Carly Fiorina', ended : true },
+  { party : REPUBLICAN, key : 'gilmore', displaySurname : 'Gilmore', name : 'Jim Gilmore', ended : true },
   { party : REPUBLICAN, key : 'huckabee', displaySurname : 'Huckabee', name : 'Mike Huckabee', ended : true },
   { party : REPUBLICAN, key : 'kasich', displaySurname : 'Kasich', name : 'John Kasich' },
   { party : REPUBLICAN, key : 'paul', displaySurname : 'Paul', name : 'Rand Paul', ended : true },
   { party : REPUBLICAN, key : 'rubio', displaySurname : 'Rubio', name : 'Marco Rubio' },
-  { party : REPUBLICAN, key : 'santorum', displaySurname : 'Santorum', name : 'Rick Santorum' },
+  { party : REPUBLICAN, key : 'santorum', displaySurname : 'Santorum', name : 'Rick Santorum', ended : true },
   { party : REPUBLICAN, key : 'trump', displaySurname : 'Trump', name : 'Donald Trump' }
 ];
 
@@ -70,7 +70,7 @@ CANDIDATES.forEach(d => {
 
 const PRIMARIES = {
   DEM : {
-    fullDelegateCount : 4763,
+    fullDelegateCount : 4764,
     colours : ['#005994','#2eb6bc','#7199ad']
   },
   GOP : {
@@ -222,7 +222,7 @@ export default class USPrimaries extends BoundedSVG {
     var winLine = null;
     if(maximumDelegates > primary.fullDelegateCount * 0.30) {
       maximumDelegates = Math.max(primary.fullDelegateCount / 2, maximumDelegates);
-      winLine = Math.ceil(primary.fullDelegateCount / 2);
+      winLine = Math.ceil((primary.fullDelegateCount + 0.1) / 2);
     }
 
     maximumDelegates = Math.min(maximumDelegates * 1.1, primary.fullDelegateCount);
