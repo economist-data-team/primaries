@@ -68,7 +68,7 @@ CANDIDATES.forEach(d => {
 
 // console.log(CANDIDATES);
 
-const PRIMARIES = {
+export const PRIMARIES = {
   DEM : {
     fullDelegateCount : 4764,
     colours : ['#005994','#2eb6bc','#7199ad']

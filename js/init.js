@@ -7,12 +7,12 @@ import { Im, parseNumerics, connectMap }
 
 import colours from './econ_colours.js';
 
-import Header from './header.js';
+import HeaderRaw from './header.js';
 import Footer from './footer.js';
 import ToggleBarRaw from './toggle-bar.js';
 import ChartContainer from './chart-container.js';
 import StateInfoWindowRaw from './us-primaries-state-infowindow.js';
-import USPrimariesRaw, { DEMOCRAT, REPUBLICAN } from './us-primary.js';
+import USPrimariesRaw, { DEMOCRAT, REPUBLICAN, PRIMARIES } from './us-primary.js';
 
 import chroma from 'chroma-js';
 
@@ -58,6 +58,14 @@ var StateInfoWindow = connectMap({
   state : 'focusPrimary'
 })(StateInfoWindowRaw);
 
+
+var Header = connect(function(state) {
+  var threshold = Math.ceil((PRIMARIES[state.party].fullDelegateCount + 0.1) / 2);
+  return {
+    subtitle : `Delegate support, to date; ${d3.format(',')(threshold)} needed to win`
+  };
+})(HeaderRaw);
+
 class Chart extends ChartContainer {
   render() {
     var toggleProps = {
@@ -90,7 +98,7 @@ class Chart extends ChartContainer {
 
     return(
       <div className='chart-container'>
-        <Header title="2016 US primary-elections calendar" subtitle="Delegate support, to date"/>
+        <Header title="2016 US primary-elections calendar"/>
         <div className="party-toggle-container">
           <ToggleBar {...toggleProps} />
         </div>
