@@ -75,8 +75,12 @@ export const PRIMARIES = {
   },
   GOP : {
     fullDelegateCount : 2472,
-    colours : ['#e30613','#ed5755','#f49a99','#ce96a1','#a25e7f','#941247',
-               '#866b67','#ccaf88','#fed700','#f0ae00','#cd881d','#ea5f10']
+    colours : ['#e30613','#fed700','#f49a99',
+               '#a25e7f','#866b67','#cd881d',
+               '#ed5755','#ce96a1','#941247',
+               '#ccaf88','#f0ae00','#ea5f10']
+    // colours : ['#e30613','#ed5755','#f49a99','#ce96a1','#a25e7f','#941247',
+    //            '#866b67','#ccaf88','#fed700','#f0ae00','#cd881d','#ea5f10']
   }
 }
 
