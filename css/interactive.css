@@ -176,3 +176,38 @@
     }
   }
 }
+
+.loading.chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  height: 400px;
+}
+
+@keyframes loading-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.loading-group {
+  text-align: center;
+}
+.loading-text {
+  font-size: 24px;
+  /*animation: 2s linear 0s infinite alternate loading-fade;*/
+}
+.loading-dots {
+  .dot {
+    width: 10px; height: 10px; background-color: var(--red-1);
+    border-radius: 5px; display: inline-block; margin: 0 5px;
+    opacity: 0;
+
+    &:nth-child(1) { animation: 1s ease-in-out 0.0s infinite alternate loading-fade; }
+    &:nth-child(2) { animation: 1s ease-in-out 0.2s infinite alternate loading-fade; }
+    &:nth-child(3) { animation: 1s ease-in-out 0.4s infinite alternate loading-fade; }
+    &:nth-child(4) { animation: 1s ease-in-out 0.6s infinite alternate loading-fade; }
+    &:nth-child(5) { animation: 1s ease-in-out 0.8s infinite alternate loading-fade; }
+  }
+}
