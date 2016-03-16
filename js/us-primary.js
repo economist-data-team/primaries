@@ -44,7 +44,7 @@ export const CANDIDATES = [
   { party : DEMOCRAT, key : 'sanders', displaySurname : 'Sanders', name : 'Bernie Sanders' },
 
   { party : REPUBLICAN, key : 'bush', displaySurname : 'Bush', name : 'Jeb Bush', ended : true },
-  { party : REPUBLICAN, key : 'carson', displaySurname : 'Carson', name : 'Ben Carson' },
+  { party : REPUBLICAN, key : 'carson', displaySurname : 'Carson', name : 'Ben Carson', ended : true },
   { party : REPUBLICAN, key : 'christie', displaySurname : 'Christie', name : 'Chris Christie', ended : true },
   { party : REPUBLICAN, key : 'cruz', displaySurname : 'Cruz', name : 'Ted Cruz' },
   { party : REPUBLICAN, key : 'fiorina', displaySurname : 'Fiorina', name : 'Carly Fiorina', ended : true },
@@ -52,7 +52,7 @@ export const CANDIDATES = [
   { party : REPUBLICAN, key : 'huckabee', displaySurname : 'Huckabee', name : 'Mike Huckabee', ended : true },
   { party : REPUBLICAN, key : 'kasich', displaySurname : 'Kasich', name : 'John Kasich' },
   { party : REPUBLICAN, key : 'paul', displaySurname : 'Paul', name : 'Rand Paul', ended : true },
-  { party : REPUBLICAN, key : 'rubio', displaySurname : 'Rubio', name : 'Marco Rubio' },
+  { party : REPUBLICAN, key : 'rubio', displaySurname : 'Rubio', name : 'Marco Rubio', ended : true },
   { party : REPUBLICAN, key : 'santorum', displaySurname : 'Santorum', name : 'Rick Santorum', ended : true },
   { party : REPUBLICAN, key : 'trump', displaySurname : 'Trump', name : 'Donald Trump' }
 ];

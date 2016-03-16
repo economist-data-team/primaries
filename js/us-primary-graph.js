@@ -70,7 +70,7 @@ export default class PrimaryGraph extends BoundedSVG {
     var countTarget = cutoffCandidate.delegates[numPrimaries - 1];
     // var labeledCandidates = this.props.candidates.slice(0,6);
     var labeledCandidates = this.props.candidates.filter(
-      c => !c.ended
+      c => !c.ended || c.delegates[numPrimaries - 1] >= 100
     ).filter(
       c => c.delegates[numPrimaries - 1] >= countTarget
     );
