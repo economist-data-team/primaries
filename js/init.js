@@ -62,7 +62,7 @@ var StateInfoWindow = connectMap({
 var Header = connect(function(state) {
   var threshold = Math.ceil((PRIMARIES[state.party].fullDelegateCount + 0.1) / 2);
   return {
-    subtitle : `Delegate support, as of 7am EST March 16th (${d3.format(',')(threshold)} needed to win)`
+    subtitle : `Delegate support, as of 2am EST March 27th (${d3.format(',')(threshold)} needed to win)`
   };
 })(HeaderRaw);
 
