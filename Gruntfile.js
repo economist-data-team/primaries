@@ -24,6 +24,9 @@ module.exports = function(grunt) {
     },
     webpack : {
       options: webpackBuildConfig,
+      'build' : {
+        debug : 'false'
+      },
       'build-dev' : {
         devtool : 'sourcemap',
         debug : true
@@ -100,4 +103,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-postcss');
 
   grunt.registerTask('default', ['webpack:build-dev', 'postcss', 'connect', 'watch']);
+  grunt.registerTask('build', ['webpack:build', 'postcss']);
 };
