@@ -3,6 +3,7 @@ import d3 from 'd3';
 import React from 'react';
 import RFD from 'react-faux-dom';
 import { Im, generateTranslateString, addDOMProperty } from './utilities.js';
+import chroma from 'chroma-js';
 import colours from './econ_colours.js';
 
 import PrimariesKey from './primaries-key.js';
@@ -46,7 +47,7 @@ export const CANDIDATES = [
   { party : REPUBLICAN, key : 'bush', displaySurname : 'Bush', name : 'Jeb Bush', ended : true },
   { party : REPUBLICAN, key : 'carson', displaySurname : 'Carson', name : 'Ben Carson', ended : true },
   { party : REPUBLICAN, key : 'christie', displaySurname : 'Christie', name : 'Chris Christie', ended : true },
-  { party : REPUBLICAN, key : 'cruz', displaySurname : 'Cruz', name : 'Ted Cruz' },
+  { party : REPUBLICAN, key : 'cruz', displaySurname : 'Cruz', name : 'Ted Cruz', ended : true },
   { party : REPUBLICAN, key : 'fiorina', displaySurname : 'Fiorina', name : 'Carly Fiorina', ended : true },
   { party : REPUBLICAN, key : 'gilmore', displaySurname : 'Gilmore', name : 'Jim Gilmore', ended : true },
   { party : REPUBLICAN, key : 'huckabee', displaySurname : 'Huckabee', name : 'Mike Huckabee', ended : true },
@@ -75,9 +76,9 @@ export const PRIMARIES = {
   },
   GOP : {
     fullDelegateCount : 2472,
-    colours : ['#e30613','#fed700','#f49a99',
-               '#a25e7f','#866b67','#cd881d',
-               '#ed5755','#ce96a1','#941247',
+    colours : ['#e30613','#fed700','#ed5755',
+               '#f49a99','#a25e7f','#866b67',
+               '#cd881d','#ce96a1','#941247',
                '#ccaf88','#f0ae00','#ea5f10']
     // colours : ['#e30613','#ed5755','#f49a99','#ce96a1','#a25e7f','#941247',
     //            '#866b67','#ccaf88','#fed700','#f0ae00','#cd881d','#ea5f10']
@@ -153,7 +154,7 @@ export default class USPrimaries extends BoundedSVG {
     ).map((d,idx) => Im.extend(d, {
       colour : this.props.focusCandidate &&
         this.props.focusCandidate.key !== d.key ? FADEBACK_COLOUR :
-        (d.ended ? ENDED_COLOUR : primary.colours[idx])
+        (d.ended ? chroma(primary.colours[idx]).desaturate(3) : primary.colours[idx])
     }));
 
     var stateElements = [];
