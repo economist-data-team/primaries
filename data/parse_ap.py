@@ -32,8 +32,8 @@ for party in supers:
 
 dem, rep = [p['State'] for p in supers]
 
-dem_dels = [dict([('state', s['sId']), ('party', 'DEM')] + [('%s_del' % CANDIDATE_KEYS[c['cName']], c['pTot']) for c in s['Cand']]) for s in dem]
-rep_dels = [dict([('state', s['sId']), ('party', 'GOP')] + [('%s_del' % CANDIDATE_KEYS[c['cName']], c['pTot']) for c in s['Cand']]) for s in rep]
+rep_dels = [dict([('state', s['sId']), ('party', 'GOP')] + [('%s_del' % CANDIDATE_KEYS.get(c['cName']), c['pTot']) for c in s['Cand'] if c['cName'] in CANDIDATE_KEYS.keys()]) for s in rep]
+dem_dels = [dict([('state', s['sId']), ('party', 'DEM')] + [('%s_del' % CANDIDATE_KEYS.get(c['cName']), c['pTot']) for c in s['Cand'] if c['cName'] in CANDIDATE_KEYS.keys()]) for s in dem]
 
 dels = dem_dels + rep_dels
 
