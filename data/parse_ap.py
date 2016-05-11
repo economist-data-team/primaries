@@ -1,23 +1,25 @@
 #!/usr/bin/env python3
 import requests
+import os
 import csvkit as csv
+from collections import OrderedDict
 
-CANDIDATE_KEYS = {
-    "O'Malley" : "omalley",
-    "Clinton" : "clinton",
-    "Sanders" : "sanders",
-    "Huckabee" : "huckabee",
-    "Cruz" : "cruz",
-    "Kasich" : "kasich",
-    "Carson" : "carson",
-    "Trump" : "trump",
-    "Rubio" : "rubio",
-    "Christie" : "christie",
-    "Bush" : "bush",
-    "Fiorina" : "fiorina",
-    "Paul" : "paul",
-    "Uncommitted" : "uncommitted",
-}
+CANDIDATE_KEYS = OrderedDict([
+    ("O'Malley", "omalley"),
+    ("Clinton", "clinton"),
+    ("Sanders", "sanders"),
+    ("Huckabee", "huckabee"),
+    ("Cruz", "cruz"),
+    ("Kasich", "kasich"),
+    ("Carson", "carson"),
+    ("Trump", "trump"),
+    ("Rubio", "rubio"),
+    ("Christie", "christie"),
+    ("Bush", "bush"),
+    ("Fiorina", "fiorina"),
+    ("Paul", "paul"),
+    ("Uncommitted", "uncommitted"),
+])
 
 URL = 'https://interactives.ap.org/interactives/2016/delegate-tracker/live-data/data/delegates-delsuper.json'
 r = requests.get(URL)
@@ -37,7 +39,24 @@ dem_dels = [dict([('state', s['sId']), ('party', 'DEM')] + [('%s_del' % CANDIDAT
 
 dels = dem_dels + rep_dels
 
-with open('delegates_ap.csv', 'w+') as f:
-    writer = csv.DictWriter(f, fieldnames=set(dem_dels[0].keys()).union(set(rep_dels[0].keys())))
+script_dir_path = os.path.dirname(os.path.realpath(__file__))
+outpath = os.path.join(script_dir_path, 'delegates_ap.csv')
+
+# this bit is just to ensure that the fields come out in a repeatable,
+# regular order
+def field_sorter(name):
+    if name == 'party':
+        return -1
+    elif name == 'state':
+        return -2
+    else:
+        return cand_values.index(name.split('_')[0])
+fieldnames = sorted(
+    set(dem_dels[0].keys()).union(set(rep_dels[0].keys())),
+    key=field_sorter
+)
+
+with open(outpath, 'w+') as f:
+    writer = csv.DictWriter(f, fieldnames=fieldnames)
     writer.writeheader()
     writer.writerows(dels)
