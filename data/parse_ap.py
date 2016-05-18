@@ -42,6 +42,8 @@ dels = dem_dels + rep_dels
 script_dir_path = os.path.dirname(os.path.realpath(__file__))
 outpath = os.path.join(script_dir_path, 'delegates_ap.csv')
 
+cand_values = list(CANDIDATE_KEYS.values())
+
 # this bit is just to ensure that the fields come out in a repeatable,
 # regular order
 def field_sorter(name):

@@ -51,7 +51,7 @@ export const CANDIDATES = [
   { party : REPUBLICAN, key : 'fiorina', displaySurname : 'Fiorina', name : 'Carly Fiorina', ended : true },
   { party : REPUBLICAN, key : 'gilmore', displaySurname : 'Gilmore', name : 'Jim Gilmore', ended : true },
   { party : REPUBLICAN, key : 'huckabee', displaySurname : 'Huckabee', name : 'Mike Huckabee', ended : true },
-  { party : REPUBLICAN, key : 'kasich', displaySurname : 'Kasich', name : 'John Kasich' },
+  { party : REPUBLICAN, key : 'kasich', displaySurname : 'Kasich', name : 'John Kasich', ended : true },
   { party : REPUBLICAN, key : 'paul', displaySurname : 'Paul', name : 'Rand Paul', ended : true },
   { party : REPUBLICAN, key : 'rubio', displaySurname : 'Rubio', name : 'Marco Rubio', ended : true },
   { party : REPUBLICAN, key : 'santorum', displaySurname : 'Santorum', name : 'Rick Santorum', ended : true },
