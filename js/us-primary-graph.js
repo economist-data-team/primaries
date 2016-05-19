@@ -12,6 +12,10 @@ ctx.font = 'bold 13px Officina, Calibri, Arial, sans-serif, Lucida Grande, Arial
 
 var commaFormatNumber = d3.format(',');
 
+// only one candidate can win a majority, so "above" is a single position
+const LABEL_ABOVE = [10];
+const LABELS_BELOW = d3.range(35, 130, 20);
+
 var primaryGraphPadding = 5;
 export default class PrimaryGraph extends BoundedSVG {
   constructor(...args) {
@@ -65,9 +69,17 @@ export default class PrimaryGraph extends BoundedSVG {
 
     var padding = primaryGraphPadding;
 
+    var winner_exists = this.props.winLine && candidates[0].delegates[numPrimaries - 1] > this.props.winLine;
+    // LABELS_BELOW assumes there is no label above; if there is, the win threshold will drop below the line
+    // and LABELS_BELOW must be shifted down by 15px to accomodate it.
+    var LABEL_POSITIONS = winner_exists ? LABEL_ABOVE.concat(LABELS_BELOW.map(n => n + 15)) : LABELS_BELOW;
+
+    // console.log(winner_exists, this.props.winLine, LABEL_POSITIONS);
+
     // we'll aim to show the first six, because let's not go mad
     var cutoffCandidate = this.props.candidates.slice(0,6).pop();
-    var countTarget = cutoffCandidate.delegates[numPrimaries - 1];
+    // this late in the campaign, we want to only show folks with at least 100 dels, but could go higher
+    var countTarget = Math.max(cutoffCandidate.delegates[numPrimaries - 1], 100);
     // var labeledCandidates = this.props.candidates.slice(0,6);
     var labeledCandidates = this.props.candidates.filter(
       c => !c.ended || c.delegates[numPrimaries - 1] >= 100
@@ -88,7 +100,7 @@ export default class PrimaryGraph extends BoundedSVG {
       let yPosition = d => yScale(d.delegates[0]);
 
       var superDelegateJoin = sel.selectAll('.superdelegate-bar')
-        .data(candidates);
+        .data(candidates.filter(c => c.delegates[numPrimaries - 1] > countTarget));
       superDelegateJoin.enter().append('svg:rect')
         .classed('superdelegate-bar', true);
       superDelegateJoin.exit().remove();
@@ -100,7 +112,7 @@ export default class PrimaryGraph extends BoundedSVG {
         fill : d => d.colour
       });
       var superDelegateLineJoin = sel.selectAll('.superdelegate-line')
-        .data(candidates);
+        .data(candidates.filter(c => c.delegates[numPrimaries - 1] > countTarget));
       superDelegateLineJoin.enter().append('svg:line')
         .classed('superdelegate-line trace', true);
       superDelegateLineJoin.exit().remove();
@@ -163,7 +175,7 @@ export default class PrimaryGraph extends BoundedSVG {
       .classed('trace-label-container', true);
     labelJoin.exit().remove();
     labelJoin
-      .attr('transform', d => generateTranslateString(d.x, d.y))
+      .attr('transform', (d,i) => generateTranslateString(10, LABEL_POSITIONS[i]))
       .each(function(d) {
         var label = `${d.candidate.displaySurname} ${d.candidate.delegates[lastEnteredElection]}`;
         var fillLuminance = chroma(d.candidate.colour).luminance();
@@ -186,55 +198,57 @@ export default class PrimaryGraph extends BoundedSVG {
 
     var offset = lastEnteredElection === 0 ? 10 : 5;
 
-    var linkJoin = sel.selectAll('.trace-label-links')
-      // only draw the link if we actually moved the label
-      .data(links.filter(l => Math.abs(l.source.y - l.target.y) > 0));
-    linkJoin.enter().append('svg:path')
-      .classed('trace-label-links', true);
-    linkJoin.exit().remove();
-    linkJoin.attr({
-      fill : 'none',
-      stroke : '#333',
-      d : d => `M ${d.source.x-offset} ${d.source.y}
-                C ${d.target.x} ${d.source.y} ${d.source.x-offset} ${d.target.y} ${d.target.x} ${d.target.y}`
+    // NO MORE LINKS
+    // the labels are no longer off the edge of the lines
+    //
+    // var linkJoin = sel.selectAll('.trace-label-links')
+    //   // only draw the link if we actually moved the label
+    //   .data(links.filter(l => Math.abs(l.source.y - l.target.y) > 0));
+    // linkJoin.enter().append('svg:path')
+    //   .classed('trace-label-links', true);
+    // linkJoin.exit().remove();
+    // linkJoin.attr({
+    //   fill : 'none',
+    //   stroke : '#333',
+    //   d : d => `M ${d.source.x-offset} ${d.source.y}
+    //             C ${d.target.x} ${d.source.y} ${d.source.x-offset} ${d.target.y} ${d.target.x} ${d.target.y}`
+    // });
+
+    // only one election—special case, no line
+    var dotJoin = sel.selectAll('.trace-dot')
+      .data(this.props.candidates.filter( c => {
+        return c.delegates[numPrimaries - 1] > countTarget;
+      }));
+
+    dotJoin.enter().append('svg:circle')
+      .classed('trace-dot', true);
+    dotJoin.exit().remove();
+    dotJoin.attr({
+      fill : d => d.colour,
+      cx : xScale(lastEnteredElection),
+      cy : d => yScale(+d.delegates[lastEnteredElection]),
+      r : 3,
+      'data-name' : d => d.displaySurname
     });
-    if(lastEnteredElection === 0) {
-      // only one election—special case, no line
-      var dotJoin = sel.selectAll('.trace-dot')
-        .data(candidates);
+    // sel.selectAll('.trace-line').remove();
 
-      dotJoin.enter().append('svg:circle')
-        .classed('trace-dot', true);
-      dotJoin.exit().remove();
-      dotJoin.attr({
-        fill : d => d.colour,
-        cx : xScale(0),
-        cy : d => yScale(+d.delegates[0]),
-        r : 3,
-        'data-name' : d => d.displaySurname
-      });
-      sel.selectAll('.trace-line').remove();
-    } else {
-      var traceJoin = sel.selectAll('.trace-line')
-        .data(this.props.candidates);
+    var traceJoin = sel.selectAll('.trace-line')
+      .data(this.props.candidates.filter( c => {
+        return c.delegates[numPrimaries - 1] > countTarget;
+      }));
 
-      traceJoin.enter().append('svg:path')
-        .classed('trace trace-line', true);
-      traceJoin.exit().remove();
-      traceJoin.attr({
-        stroke : d => d.colour,
-        opacity : d => !this.props.focusCandidate ||
-          this.props.focusCandidate.key === d.key ? 1 : 0.2,
-        d : d => primaryPathFn(
-          d.delegates.slice(0, this.props.lastEnteredElection + 1)
-        )
-      // }).sort((a,b) => {
-      //   if(!this.props.focusCandidate) { return 0; }
-      //   console.log(a, b);
-      //   return b.key === this.props.focusCandidate.key ? 1 : 0;
-      });
-      sel.selectAll('.trace-dot').remove();
-    }
+    traceJoin.enter().append('svg:path')
+      .classed('trace trace-line', true);
+    traceJoin.exit().remove();
+    traceJoin.attr({
+      stroke : d => d.colour,
+      opacity : d => !this.props.focusCandidate ||
+        this.props.focusCandidate.key === d.key ? 1 : 0.2,
+      d : d => primaryPathFn(
+        d.delegates.slice(0, this.props.lastEnteredElection + 1)
+      )
+    });
+    // sel.selectAll('.trace-dot').remove();
 
     var self = this;
     var winLine = this.props.winLine ? [this.props.winLine] : [];
@@ -256,9 +270,10 @@ export default class PrimaryGraph extends BoundedSVG {
           .classed('win-line-label', true)
           .text(n => `Needed to win: ${n} delegates`)
           .attr({
-            x : self.rightBound,
-            y : -3,
-            textAnchor : 'end'
+            x : self.leftBound,
+            // above the line if no winner yet, below if winner
+            y : winner_exists ? 13 : -4,
+            textAnchor : 'start'
           });
       });
     winLineJoin.exit().remove();
