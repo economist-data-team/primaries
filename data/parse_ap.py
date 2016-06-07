@@ -37,7 +37,8 @@ dem, rep = [p['State'] for p in supers]
 rep_dels = [dict([('state', s['sId']), ('party', 'GOP')] + [('%s_del' % CANDIDATE_KEYS.get(c['cName']), c['pTot']) for c in s['Cand'] if c['cName'] in CANDIDATE_KEYS.keys()]) for s in rep]
 dem_dels = [dict([('state', s['sId']), ('party', 'DEM')] + [('%s_del' % CANDIDATE_KEYS.get(c['cName']), c['pTot']) for c in s['Cand'] if c['cName'] in CANDIDATE_KEYS.keys()]) for s in dem]
 
-dels = dem_dels + rep_dels
+dem_spdel = [dict([('state', 'SPD'), ('party', 'DEM')] + [('%s_del' % CANDIDATE_KEYS.get(c['cName']), c['sdTot']) for c in s['Cand']]) for s in [d for d in dem if d['sId'] == 'US']]
+rep_spdel = [dict([('state', 'SPD'), ('party', 'GOP')] + [('%s_del' % CANDIDATE_KEYS.get(c['cName']), c['sdTot']) for c in s['Cand']]) for s in [d for d in rep if d['sId'] == 'US']]
 
 script_dir_path = os.path.dirname(os.path.realpath(__file__))
 outpath = os.path.join(script_dir_path, 'delegates_ap.csv')
@@ -57,6 +58,11 @@ fieldnames = sorted(
     set(dem_dels[0].keys()).union(set(rep_dels[0].keys())),
     key=field_sorter
 )
+
+dem_spdel[0] = {k:v for k,v in dem_spdel[0].items() if k in fieldnames}
+rep_spdel[0] = {k:v for k,v in rep_spdel[0].items() if k in fieldnames}
+
+dels = dem_dels + rep_dels + dem_spdel + rep_spdel
 
 with open(outpath, 'w+') as f:
     writer = csv.DictWriter(f, fieldnames=fieldnames)
