@@ -107,7 +107,7 @@ export default class USPrimaryElement extends React.Component {
         geomElement = (<path {...starProps} />);
     }
 
-    var label = superdel ? 'Superdelegates' : this.props.state;
+    var label = superdel ? this.props.state_full_name : this.props.state;
 
     var groupProps = Im.extend({
       transform : translate
