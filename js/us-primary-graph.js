@@ -69,7 +69,7 @@ export default class PrimaryGraph extends BoundedSVG {
 
     var padding = primaryGraphPadding;
 
-    var winner_exists = this.props.winLine && candidates[0].delegates[numPrimaries - 1] > this.props.winLine;
+    var winner_exists = this.props.winLine && candidates[0].delegates[numPrimaries - 1] >= this.props.winLine;
     // LABELS_BELOW assumes there is no label above; if there is, the win threshold will drop below the line
     // and LABELS_BELOW must be shifted down by 15px to accomodate it.
     var LABEL_POSITIONS = winner_exists ? LABEL_ABOVE.concat(LABELS_BELOW.map(n => n + 15)) : LABELS_BELOW;
@@ -177,7 +177,7 @@ export default class PrimaryGraph extends BoundedSVG {
     labelJoin
       .attr('transform', (d,i) => generateTranslateString(10, LABEL_POSITIONS[i]))
       .each(function(d) {
-        var label = `${d.candidate.displaySurname} ${d.candidate.delegates[lastEnteredElection]}`;
+        var label = `${d.candidate.displaySurname} ${ commaFormatNumber(d.candidate.delegates[lastEnteredElection]) }`;
         var fillLuminance = chroma(d.candidate.colour).luminance();
         var rect = guarantee(this, 'trace-bg', 'svg:rect')
           .attr({
@@ -271,8 +271,6 @@ export default class PrimaryGraph extends BoundedSVG {
           .text(n => `Needed to win: ${n} delegates`)
           .attr({
             x : self.leftBound,
-            // above the line if no winner yet, below if winner
-            y : winner_exists ? 13 : -4,
             textAnchor : 'start'
           });
       });
@@ -284,7 +282,11 @@ export default class PrimaryGraph extends BoundedSVG {
       .each(function() {
         var sel = d3.select(this);
         sel.select('.win-line-label')
-          .text(n => `Needed to win: ${commaFormatNumber(n)} delegates`);
+          .text(n => `Needed to win: ${commaFormatNumber(n)} delegates`)
+          .attr({
+            // above the line if no winner yet, below if winner
+            y : winner_exists ? 13 : -4,
+          });
       });
 
     return el.toReact();
