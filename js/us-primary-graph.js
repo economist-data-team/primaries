@@ -13,8 +13,8 @@ ctx.font = 'bold 13px Officina, Calibri, Arial, sans-serif, Lucida Grande, Arial
 var commaFormatNumber = d3.format(',');
 
 // only one candidate can win a majority, so "above" is a single position
-const LABEL_ABOVE = [10];
-const LABELS_BELOW = d3.range(35, 130, 20);
+const LABEL_ABOVE = [-12];
+const LABELS_BELOW = d3.range(12, 130, 20);
 
 var primaryGraphPadding = 5;
 export default class PrimaryGraph extends BoundedSVG {
@@ -25,7 +25,8 @@ export default class PrimaryGraph extends BoundedSVG {
   static get defaultProps() {
     return Im.extend(super.defaultProps, {
       candidates : [],
-      luminanceThreshold : 0.5
+      luminanceThreshold : 0.5,
+      winLine : 0,
     });
   }
   d3render() {
@@ -72,7 +73,9 @@ export default class PrimaryGraph extends BoundedSVG {
     var winner_exists = this.props.winLine && candidates[0].delegates[numPrimaries - 1] >= this.props.winLine;
     // LABELS_BELOW assumes there is no label above; if there is, the win threshold will drop below the line
     // and LABELS_BELOW must be shifted down by 15px to accomodate it.
-    var LABEL_POSITIONS = winner_exists ? LABEL_ABOVE.concat(LABELS_BELOW.map(n => n + 15)) : LABELS_BELOW;
+    var LABEL_POSITIONS = (winner_exists ?
+      LABEL_ABOVE.concat(LABELS_BELOW.map(n => n + 15)) :
+      LABELS_BELOW).map(n => n + yScale(this.props.winLine));
 
     // console.log(winner_exists, this.props.winLine, LABEL_POSITIONS);
 
